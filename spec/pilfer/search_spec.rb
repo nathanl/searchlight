@@ -19,6 +19,20 @@ describe Pilfer::Search do
 
   end
 
+  describe "search_on" do
+
+    let(:search_target) { "Bobby Fischer" }
+
+    before :each do
+      search_class.search_on search_target
+    end
+
+    it "makes the object accessible via `search_target`" do
+      expect(search_class.search_target).to eq(search_target)
+    end
+
+  end
+
   describe "search options" do
 
     describe "accessors" do

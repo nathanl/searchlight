@@ -1,6 +1,14 @@
 module Pilfer
   class Search
 
+    class << self
+      attr_reader :search_target
+    end
+
+    def self.search_on(target)
+      @search_target = target
+    end
+
     def self.searches(*attribute_names)
       include_module "accessors" do
         attr_accessor *attribute_names
