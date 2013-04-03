@@ -1,4 +1,7 @@
 require 'pilfer'
+$LOAD_PATH << '.'
+require 'support/mock_relation'
+require 'support/account_search'
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true

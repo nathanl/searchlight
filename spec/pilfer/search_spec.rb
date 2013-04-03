@@ -105,7 +105,17 @@ describe Pilfer::Search do
 
   end
 
-  describe "searching" do
+  describe "search" do
+
+    let(:search) { AccountSearch.new }
+
+    it "is initialized with the search_target" do
+      expect(search.search).to eq(MockRelation)
+    end
+
+  end
+
+  describe "results" do
   end
 
   describe "coersion procs" do

@@ -35,6 +35,10 @@ module Pilfer
       options.each { |key, value| public_send("#{key}=", value) }
     end
 
+    def search
+      @search ||= self.class.search_target
+    end
+
     private
 
     # Yes, we really are crazy.  But now your anonymous modules have names!
