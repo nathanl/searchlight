@@ -115,7 +115,18 @@ describe Pilfer::Search do
 
   end
 
+  describe "run" do
+
+    it "calls all of the search methods"
+
+    it "uses each search method to refine the current search"
+
+  end
+
   describe "results" do
+
+    it "runs and returns the search"
+
   end
 
   describe "coersion procs" do
