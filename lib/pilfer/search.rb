@@ -2,7 +2,12 @@ module Pilfer
   class Search
 
     class << self
-      attr_reader :search_target
+      attr_reader :search_target, :search_methods
+    end
+
+    def self.method_added(name)
+      @search_methods ||= []
+      @search_methods << name if name.to_s.end_with?('_search') unless @search_methods.include?(name)
     end
 
     def self.search_on(target)

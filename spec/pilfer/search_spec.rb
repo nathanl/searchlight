@@ -33,6 +33,24 @@ describe Pilfer::Search do
 
   end
 
+  describe "search_methods" do
+
+    let(:search_class) {
+      Class.new(described_class) do
+        def bees_search
+        end
+
+        def bats_search
+        end
+      end
+    }
+
+    it "lists the search methods" do
+      expect(search_class.search_methods).to eq([:bees_search, :bats_search])
+    end
+
+  end
+
   describe "search options" do
 
     describe "accessors" do
