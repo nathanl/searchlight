@@ -68,6 +68,11 @@ describe Pilfer::Search do
         expect(search).to respond_to(:foo=)
       end
 
+      it "includes a PilferAccessors module" do
+        accessors_module = search_class.ancestors.detect {|a| a.name == 'PilferAccessors' }
+        expect(accessors_module).to be_a(Named::Module)
+      end
+
     end
 
     describe "coercing search options" do
@@ -76,8 +81,7 @@ describe Pilfer::Search do
       let(:coercer) { Pilfer::Coercer }
 
       before :each do
-        search_class.searches :foo
-        search_class.searches :bar
+        search_class.searches :foo, :bar
       end
 
       describe "using Coercer" do
@@ -95,6 +99,11 @@ describe Pilfer::Search do
         it "coerces booleans with the boolean method" do
           coercer.should_receive(:boolean).with('0')
           search.bar
+        end
+
+        it "includes a PilferCoercions module" do
+          accessors_module = search_class.ancestors.detect {|a| a.name == 'PilferCoercions' }
+          expect(accessors_module).to be_a(Named::Module)
         end
 
       end

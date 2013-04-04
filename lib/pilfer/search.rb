@@ -1,4 +1,5 @@
 require 'set'
+
 module Pilfer
   class Search
 
@@ -16,14 +17,14 @@ module Pilfer
     end
 
     def self.searches(*attribute_names)
-      include_module "accessors" do
+      include_new_module "PilferAccessors" do
         attr_accessor *attribute_names
       end
     end
 
     def self.coerces(*attribute_names, options)
       coerce_to = options.fetch(:to) { raise ArgumentError.new "You must provide a :to option" }
-      include_module "coersions" do
+      include_new_module "PilferCoercions" do
         attribute_names.each do |attribute_name|
           define_method(attribute_name) do
             coerce(super(), coerce_to)
@@ -44,22 +45,13 @@ module Pilfer
 
     private
 
-    # Yes, we really are crazy.  But now your anonymous modules have names!
-    # Used so we can allow calling super in sub modules and the base class.
-    def self.include_module(module_name, &content)
-      mod   = Module.new(&content)
-      eigen = class << mod; self; end
-      call  = caller.first
-
-      eigen.define_method :to_s do
-        "Pilfer::Search #{module_name} (#{call})"
-      end
-      
-      include mod
+    # So that we can allow calling `super` in submodules and the base class.
+    def self.include_new_module(module_name, &content)
+      include Named::Module.new(module_name, &content)
     end
 
     def coerce(value, coersion)
-      Coercer.send(coersion, value)
+      Coercer.public_send(coersion, value)
     end
 
   end
