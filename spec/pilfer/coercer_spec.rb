@@ -10,7 +10,6 @@ describe Pilfer::Coercer do
       '0'     => false,
       ''      => false,
       ' '     => false,
-      nil     => false,
       'false' => false,
       1       => true,
       '1'     => true,
@@ -21,6 +20,10 @@ describe Pilfer::Coercer do
 
       it "coerces #{input.inspect} to #{output}" do
         expect(coercer.boolean(input)).to be(output)
+      end
+
+      it "does NOT coerce nil to a boolean, so that options not supplied are not assumed to be false" do
+        expect(coercer.boolean(nil)).to be(nil)
       end
     end
   end
