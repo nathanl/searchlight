@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "pilfer"
   spec.version       = Pilfer::VERSION
   spec.authors       = ["Nathan Long", "Adam Hunter"]
-  gem.email         = ["nathanmlong@gmail.com", "adamhunter@me.com"]
+  spec.email         = ["nathanmlong@gmail.com", "adamhunter@me.com"]
   spec.description   = %q{TODO: Write a gem description}
   spec.summary       = %q{TODO: Write a gem summary}
   spec.homepage      = ""
