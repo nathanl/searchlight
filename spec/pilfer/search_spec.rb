@@ -42,11 +42,14 @@ describe Pilfer::Search do
 
         def bats_search
         end
+
+        def bees_search
+        end
       end
     }
 
-    it "lists the search methods" do
-      expect(search_class.search_methods).to eq([:bees_search, :bats_search])
+    it "keeps a unique list of the search methods" do
+      expect(search_class.search_methods).to eq(Set.new([:bees_search, :bats_search]))
     end
 
   end

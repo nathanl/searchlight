@@ -1,3 +1,4 @@
+require 'set'
 module Pilfer
   class Search
 
@@ -6,8 +7,8 @@ module Pilfer
     end
 
     def self.method_added(name)
-      @search_methods ||= []
-      @search_methods << name if name.to_s.end_with?('_search') unless @search_methods.include?(name)
+      @search_methods ||= Set.new
+      @search_methods << name if name.to_s.end_with?('_search')
     end
 
     def self.search_on(target)
