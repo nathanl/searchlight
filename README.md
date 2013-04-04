@@ -1,6 +1,6 @@
 # Pilfer
 
-TODO: Write a gem description
+Pilfer helps you build searches from options via Ruby methods that you write. It's like Ransack, but less so.
 
 [![Build Status](https://secure.travis-ci.org/nathanl/pilfer.png?branch=master)](http://travis-ci.org/nathanl/pilfer)
 [![Code Climate](https://codeclimate.com/github/nathanl/pilfer.png)](https://codeclimate.com/github/nathanl/pilfer)
