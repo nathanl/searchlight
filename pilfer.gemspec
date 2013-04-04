@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Pilfer::VERSION
   spec.authors       = ["Nathan Long", "Adam Hunter"]
   spec.email         = ["nathanmlong@gmail.com", "adamhunter@me.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{Pilfer helps you build searches from options via Ruby methods that you write. It's like Ransack, but less so.}
+  spec.summary       = %q{Pilfer helps you build searches from options via Ruby methods that you write. It's like Ransack, but less so.}
+  spec.homepage      = "https://github.com/nathanl/pilfer"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
