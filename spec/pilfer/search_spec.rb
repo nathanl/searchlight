@@ -117,22 +117,28 @@ describe Pilfer::Search do
     let(:search) { AccountSearch.new }
 
     it "is initialized with the search_target" do
-      expect(search.search).to eq(MockRelation)
+      expect(search.search).to eq(MockModel)
     end
-
-  end
-
-  describe "run" do
-
-    it "calls all of the search methods"
-
-    it "uses each search method to refine the current search"
 
   end
 
   describe "results" do
 
-    it "runs and returns the search"
+    let(:search) { AccountSearch.new }
+
+    it "builds a search by calling all of the search methods" do
+      search.results
+      expect(search.search.called_methods).to eq(4.times.map { :where })
+    end
+
+    it "returns the search" do
+      expect(search.results).to eq(search.search)
+    end
+
+    it "only runs the search once" do
+      search.should_receive(:run).once.and_call_original
+      2.times { search.results }
+    end
 
   end
 

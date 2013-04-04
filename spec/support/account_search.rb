@@ -1,6 +1,6 @@
 class AccountSearch < Pilfer::Search
 
-  search_on MockRelation
+  search_on MockModel
 
   searches :paid_amount, :business_name, :balance, :active
 
@@ -8,19 +8,19 @@ class AccountSearch < Pilfer::Search
   coerces :paid_amount, to: :integer
 
   def paid_amount_search
-    results.where('amount > ?', paid_amount)
+    search.where('amount > ?', paid_amount)
   end
 
   def business_name_search
-    results.where(business_name: business_name)
+    search.where(business_name: business_name)
   end
 
   def balance_search
-    results.where("owed - amount > ?", balance)
+    search.where("owed - amount > ?", balance)
   end
 
   def active_search
-    results.where(active: active)
+    search.where(active: active)
   end
 
 end

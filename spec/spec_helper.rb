@@ -1,6 +1,6 @@
 require 'pilfer'
 $LOAD_PATH << '.'
-require 'support/mock_relation'
+require 'support/mock_model'
 require 'support/account_search'
 
 RSpec.configure do |config|

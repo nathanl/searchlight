@@ -31,7 +31,7 @@ module Pilfer
           end
         end
       end
-    end 
+    end
 
     def initialize(options = {})
       options.each { |key, value| public_send("#{key}=", value) }
@@ -39,6 +39,10 @@ module Pilfer
 
     def search
       @search ||= self.class.search_target
+    end
+
+    def results
+      @results ||= run
     end
 
     protected
@@ -54,6 +58,13 @@ module Pilfer
 
     def coerce(value, coersion)
       Coercer.public_send(coersion, value)
+    end
+
+    def run
+      self.class.search_methods.each do |method|
+        self.search = public_send(method)
+      end
+      search
     end
 
   end
