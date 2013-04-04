@@ -9,7 +9,7 @@ module Pilfer
 
     def self.method_added(name)
       @search_methods ||= Set.new
-      @search_methods << name if name.to_s.end_with?('_search')
+      search_methods << name if name.to_s.end_with?('_search')
     end
 
     def self.search_on(target)
@@ -33,8 +33,6 @@ module Pilfer
       end
     end 
 
-    attr_writer :search
-
     def initialize(options = {})
       options.each { |key, value| public_send("#{key}=", value) }
     end
@@ -42,6 +40,10 @@ module Pilfer
     def search
       @search ||= self.class.search_target
     end
+
+    protected
+
+    attr_writer :search
 
     private
 
