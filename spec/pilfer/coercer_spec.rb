@@ -36,6 +36,10 @@ describe Pilfer::Coercer do
       coercer.integer(input)
     end
 
+    it "does NOT coerce nil to an integer, so that options not supplied are not assumed to be 0" do
+      expect(coercer.integer(nil)).to be(nil)
+    end
+
   end
 
 end

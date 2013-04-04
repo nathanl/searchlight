@@ -7,6 +7,7 @@ module Pilfer
     end
 
     def self.integer(value)
+      return nil if value.nil?
       value.to_i
     end
 
