@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Pilfer::Search do
 
-  let(:search_class) { Class.new(described_class) }
+  let(:search_class) { Named::Class.new('SearchClass', described_class) }
   let(:options) { Hash.new }
   let(:search) { search_class.new(options) }
 
@@ -34,7 +34,7 @@ describe Pilfer::Search do
   describe "search_methods" do
 
     let(:search_class) {
-      Class.new(described_class) do
+      Named::Class.new('SearchClass', described_class) do
         def bees_search
         end
 
