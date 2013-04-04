@@ -2,6 +2,9 @@
 
 TODO: Write a gem description
 
+[![Travis CI](https://api.travis-ci.org/nathanl/pilfer.png?branch=master)](https://api.travis-ci.org/nathanl/pilfer.png?branch=master)
+[![Code Climate](https://codeclimate.com/github/nathanl/pilfer.png)](https://codeclimate.com/github/nathanl/pilfer)
+
 ## Installation
 
 Add this line to your application's Gemfile:
