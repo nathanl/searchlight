@@ -32,6 +32,8 @@ module Pilfer
       end
     end 
 
+    attr_writer :search
+
     def initialize(options = {})
       options.each { |key, value| public_send("#{key}=", value) }
     end
@@ -57,14 +59,8 @@ module Pilfer
     end
 
     def coerce(value, coersion)
-      COERCIONS.fetch(coersion).call(value)
+      Coercer.send(coersion, value)
     end
 
-    Boolean = Class.new
-
-    COERCIONS = {
-      Boolean => proc {|val| !['0', 'false', ''].include?(val.to_s.strip) },
-      Integer => proc {|val| val.to_i }
-    }
   end
 end

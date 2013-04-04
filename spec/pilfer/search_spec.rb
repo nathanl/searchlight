@@ -5,8 +5,6 @@ describe Pilfer::Search do
   let(:search_class) { Class.new(described_class) }
   let(:options) { Hash.new }
   let(:search) { search_class.new(options) }
-  let(:boolean_type) { described_class.const_get(:Boolean) }
-  let(:integer_type) { Integer }
 
   describe "initializing" do
 
@@ -72,34 +70,31 @@ describe Pilfer::Search do
 
     end
 
-    describe "coercion to" do
+    describe "coercing search options" do
 
-      let(:options) { {foo: '1'} }
+      let(:options) { {foo: '1', bar: '0'} }
+      let(:coercer) { Pilfer::Coercer }
 
       before :each do
         search_class.searches :foo
+        search_class.searches :bar
       end
 
-      describe "integer" do
+      describe "using Coercer" do
 
         before :each do
-          search_class.coerces :foo, to: integer_type
+          search_class.coerces :foo, to: :integer
+          search_class.coerces :bar, to: :boolean
         end
 
-        it "coerces" do
-          expect(search.foo).to be(1)
+        it "coerces integers with integer method" do
+          coercer.should_receive(:integer).with('1')
+          search.foo
         end
 
-      end
-
-      describe "boolean" do
-
-        before :each do
-          search_class.coerces :foo, to: boolean_type
-        end
-
-        it "coerces" do
-          expect(search.foo).to be(true)
+        it "coerces booleans with the boolean method" do
+          coercer.should_receive(:boolean).with('0')
+          search.bar
         end
 
       end
@@ -130,43 +125,6 @@ describe Pilfer::Search do
 
     it "runs and returns the search"
 
-  end
-
-  describe "coersion procs" do
-    let(:coercer) { described_class.const_get(:COERCIONS).fetch(coercion_type) }
-
-    describe "boolean" do
-      let(:coercion_type) { boolean_type }
-
-      {
-         0      => false,
-        '0'     => false,
-         ''     => false,
-         ' '    => false,
-         nil    => false,
-        'false' => false,
-         1      => true,
-        '1'     => true,
-         15     => true,
-        'true'  => true,
-        'pie'   => true
-      }.each do |input, output|
-        
-        it "coerces #{input.inspect} to #{output}" do
-          expect(coercer.call(input)).to be(output)
-        end
-      end
-    end
-
-    describe "integer" do
-      let(:coercion_type) { integer_type }
-
-      it "coerces to an integer using to_i" do
-        foo = '10'
-        foo.should_receive(:to_i)
-        coercer.call(foo)
-      end
-    end
   end
 
 end
