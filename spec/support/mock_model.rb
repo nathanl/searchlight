@@ -6,6 +6,14 @@ class MockModel
   
 end
 
+class MockActiveRecord < MockModel
+
+  def self.is_a?(thing)
+    thing == ActiveRecord::Base ? true : super
+  end
+
+end
+
 class MockRelation
   attr_reader :called_methods
 
