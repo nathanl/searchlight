@@ -41,7 +41,10 @@ module Pilfer
 
     def run
       self.class.search_methods.each do |method|
-        self.search = public_send(method)
+        option_value = public_send(method.sub('_search', ''))
+        unless option_value.nil? || option_value.to_s.strip == ''
+          self.search  = public_send(method)
+        end
       end
       search
     end

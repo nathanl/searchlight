@@ -152,4 +152,29 @@ describe Pilfer::Search do
 
   end
 
+  describe "run" do
+
+    let(:search_class) {
+      Named::Class.new('TinyBs', described_class) do
+        search_on Object
+        searches :bits, :bats, :bots
+
+        def bits_search; end
+        def bats_search; end
+        def bots_search; end
+
+      end
+    }
+
+    let(:search_instance) { search_class.new(bits: ' ', bats: nil, bots: false) }
+
+    it "only runs search methods that have real values to search on" do
+      search_instance.should_not_receive(:bits_search)
+      search_instance.should_not_receive(:bats_search)
+      search_instance.should_receive(:bots_search)
+      search_instance.send(:run)
+    end
+
+  end
+
 end
