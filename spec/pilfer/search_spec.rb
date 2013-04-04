@@ -134,11 +134,11 @@ describe Pilfer::Search do
 
   describe "results" do
 
-    let(:search) { AccountSearch.new }
+    let(:search) { AccountSearch.new(paid_amount: 50, business_name: "Rod's Meat Shack") }
 
-    it "builds a search by calling all of the search methods" do
+    it "builds a search by calling all of the methods that had values to search" do
       search.results
-      expect(search.search.called_methods).to eq(4.times.map { :where })
+      expect(search.search.called_methods).to eq(2.times.map { :where })
     end
 
     it "returns the search" do
