@@ -29,6 +29,16 @@ describe Pilfer::Search do
       expect(search_class.search_target).to eq(search_target)
     end
 
+    it "makes the search target available to its children" do
+      expect(SpiffyAccountSearch.search_target).to be(MockModel)
+    end
+
+    it "allows the children to set their own search target" do
+      klass = Class.new(SpiffyAccountSearch) { search_on Array }
+      expect(klass.search_target).to be(Array)
+      expect(SpiffyAccountSearch.search_target).to be(MockModel)
+    end
+
   end
 
   describe "search_methods" do

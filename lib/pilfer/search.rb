@@ -4,8 +4,12 @@ module Pilfer
   class Search
     extend DSL
 
-    class << self
-      attr_reader :search_target, :search_methods
+    def self.search_target
+      defined?(@search_target) ? @search_target : superclass.search_target
+    end
+
+    def self.search_methods
+      defined?(@search_methods) ? @search_methods : superclass.search_methods
     end
 
     def self.method_added(name)

@@ -2,6 +2,7 @@ require 'pilfer'
 $LOAD_PATH << '.'
 require 'support/mock_model'
 require 'support/account_search'
+require 'support/spiffy_account_search'
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
