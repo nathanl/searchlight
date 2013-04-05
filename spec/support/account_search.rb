@@ -4,19 +4,19 @@ class AccountSearch < Pilfer::Search
 
   searches :paid_amount, :business_name, :balance, :active
 
-  def paid_amount_search
+  def search_paid_amount
     search.where('amount > ?', paid_amount)
   end
 
-  def business_name_search
+  def search_business_name
     search.where(business_name: business_name)
   end
 
-  def balance_search
+  def search_balance
     search.where("owed - amount > ?", balance)
   end
 
-  def active_search
+  def search_active
     search.where(active: active?)
   end
 

@@ -14,7 +14,7 @@ class AccountsSearch < Pilfer::Search
 
   searches :contract_id, :invoiced
 
-  def invoiced_search
+  def search_invoiced
     case invoiced
     when 'fully'
       search.fully_invoiced

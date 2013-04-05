@@ -11,11 +11,11 @@ describe Pilfer::Adapters::ActiveRecord do
   end
 
   it "adds search methods to the search class" do
-    expect(search_class.new).to respond_to(:elephants_search)
+    expect(search_class.new).to respond_to(:search_elephants)
   end
 
-  it "adds elephants_search to the search_methods array" do
-    expect(search_class.search_methods).to include('elephants_search')
+  it "adds search_elephants to the search_methods array" do
+    expect(search_class.search_methods).to include('search_elephants')
   end
 
   it "defines search methods that call where on the search target" do

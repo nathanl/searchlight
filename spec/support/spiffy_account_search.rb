@@ -2,7 +2,7 @@ class SpiffyAccountSearch < AccountSearch
 
   searches :spiffiness
 
-  def spiffiness_search
+  def search_spiffiness
     search.where(spiffiness: spiffiness)
   end
 

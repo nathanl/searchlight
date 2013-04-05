@@ -14,7 +14,7 @@ module Pilfer
 
     def self.method_added(name)
       @search_methods ||= Set.new
-      search_methods << name.to_s if name.to_s.end_with?('_search')
+      search_methods << name.to_s if name.to_s.start_with?('search_')
     end
 
     def initialize(options = {})
@@ -37,8 +37,9 @@ module Pilfer
 
     def run
       self.class.search_methods.each do |method|
-        option_value = public_send(method.sub('_search', ''))
+        option_value = public_send(method.sub(/\Asearch_/, ''))
         unless option_value.nil? || option_value.to_s.strip == ''
+          # puts "I'm calling #{method} because I have value #{option_value}"
           self.search  = public_send(method)
         end
       end

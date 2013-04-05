@@ -45,19 +45,19 @@ describe Pilfer::Search do
 
     let(:search_class) {
       Named::Class.new('SearchClass', described_class) do
-        def bees_search
+        def search_bees
         end
 
-        def bats_search
+        def search_bats
         end
 
-        def bees_search
+        def search_bees
         end
       end
     }
 
     it "keeps a unique list of the search methods" do
-      expect(search_class.search_methods).to eq(Set.new(['bees_search', 'bats_search']))
+      expect(search_class.search_methods).to eq(Set.new(['search_bees', 'search_bats']))
     end
 
   end
@@ -164,9 +164,9 @@ describe Pilfer::Search do
         search_on Object
         searches :bits, :bats, :bots
 
-        def bits_search; end
-        def bats_search; end
-        def bots_search; end
+        def search_bits; end
+        def search_bats; end
+        def search_bots; end
 
       end
     }
@@ -174,9 +174,9 @@ describe Pilfer::Search do
     let(:search_instance) { search_class.new(bits: ' ', bats: nil, bots: false) }
 
     it "only runs search methods that have real values to search on" do
-      search_instance.should_not_receive(:bits_search)
-      search_instance.should_not_receive(:bats_search)
-      search_instance.should_receive(:bots_search)
+      search_instance.should_not_receive(:search_bits)
+      search_instance.should_not_receive(:search_bats)
+      search_instance.should_receive(:search_bots)
       search_instance.send(:run)
     end
 
