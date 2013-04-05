@@ -8,16 +8,12 @@ module Pilfer
     def searches(*attribute_names)
       include_new_module "PilferAccessors" do
         attr_accessor *attribute_names
-      end
-    end
 
-    def coerces(*attribute_names, options)
-      coerce_to = options.fetch(:to) { raise ArgumentError.new "You must provide a :to option" }
-
-      include_new_module "PilferCoercions" do
+        # define boolean accessors
         attribute_names.each do |attribute_name|
-          define_method(attribute_name) do
-            coerce(super(), coerce_to)
+          define_method("#{attribute_name}?") do
+            # Treat 0 (eg, from checkboxes) as false
+            !['0', 'false', ''].include?(public_send(attribute_name).to_s.strip) 
           end
         end
       end

@@ -70,6 +70,11 @@ describe Pilfer::Search do
         search_class.searches :foo
       end
 
+      it "includes a PilferAccessors module" do
+        accessors_module = search_class.ancestors.detect {|a| a.name == 'PilferAccessors' }
+        expect(accessors_module).to be_a(Named::Module)
+      end
+
       it "adds a getter" do
         expect(search).to respond_to(:foo)
       end
@@ -78,42 +83,42 @@ describe Pilfer::Search do
         expect(search).to respond_to(:foo=)
       end
 
-      it "includes a PilferAccessors module" do
-        accessors_module = search_class.ancestors.detect {|a| a.name == 'PilferAccessors' }
-        expect(accessors_module).to be_a(Named::Module)
+      it "adds a boolean accessor" do
+        expect(search).to respond_to(:foo?)
       end
 
     end
 
-    describe "coercing search options" do
+    describe "accessing search options as booleans" do
 
-      let(:options) { {foo: '1', bar: '0'} }
-      let(:coercer) { Pilfer::Coercer }
+      let(:options) { {fishies: fishies} }
 
       before :each do
-        search_class.searches :foo, :bar
+        search_class.searches :fishies
       end
 
-      describe "using Coercer" do
+      {
+        0       => false,
+        '0'     => false,
+        ''      => false,
+        ' '     => false,
+        nil     => false,
+        'false' => false,
+        1       => true,
+        '1'     => true,
+        15      => true,
+        'true'  => true,
+        'pie'   => true
+      }.each do |input, output|
 
-        before :each do
-          search_class.coerces :foo, to: :integer
-          search_class.coerces :bar, to: :boolean
-        end
+        describe input.inspect do
 
-        it "coerces integers with integer method" do
-          coercer.should_receive(:integer).with('1')
-          search.foo
-        end
+          let(:fishies) { input }
 
-        it "coerces booleans with the boolean method" do
-          coercer.should_receive(:boolean).with('0')
-          search.bar
-        end
+          it "becomes boolean #{output}" do
+            expect(search.fishies?).to eq(output)
+          end
 
-        it "includes a PilferCoercions module" do
-          accessors_module = search_class.ancestors.detect {|a| a.name == 'PilferCoercions' }
-          expect(accessors_module).to be_a(Named::Module)
         end
 
       end

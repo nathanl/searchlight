@@ -35,10 +35,6 @@ module Pilfer
 
     private
 
-    def coerce(value, coersion)
-      Coercer.public_send(coersion, value)
-    end
-
     def run
       self.class.search_methods.each do |method|
         option_value = public_send(method.sub('_search', ''))

@@ -4,9 +4,6 @@ class AccountSearch < Pilfer::Search
 
   searches :paid_amount, :business_name, :balance, :active
 
-  coerces :active,      to: :boolean
-  coerces :paid_amount, to: :integer
-
   def paid_amount_search
     search.where('amount > ?', paid_amount)
   end
@@ -20,7 +17,7 @@ class AccountSearch < Pilfer::Search
   end
 
   def active_search
-    search.where(active: active)
+    search.where(active: active?)
   end
 
 end
