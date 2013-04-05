@@ -1,8 +1,11 @@
 require 'spec_helper'
-require 'action_view'
-require 'pilfer/adapters/action_view'
 
-describe Pilfer::Adapters::ActionView, type: :feature, adapter: true do
+describe 'Pilfer::Adapters::ActionView', type: :feature, adapter: true do
+
+  before :all do
+    require 'pilfer/adapters/action_view'
+    require 'action_view'
+  end
 
   let(:view)   { ::ActionView::Base.new }
   let(:search) { AccountSearch.new(paid_amount: 15) }

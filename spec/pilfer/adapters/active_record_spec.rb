@@ -1,8 +1,11 @@
 require 'spec_helper'
-require 'active_record'
-require 'pilfer/adapters/active_record'
 
-describe Pilfer::Adapters::ActiveRecord, adapter: true do
+describe 'Pilfer::Adapters::ActiveRecord', adapter: true do
+
+  before :all do
+    require 'pilfer/adapters/active_record'
+    require 'active_record'
+  end
 
   let(:search_class) { Named::Class.new('SearchClass', Pilfer::Search) { search_on MockActiveRecord } }
   let(:search_instance) { search_class.new(elephants: 'yes, please') }
