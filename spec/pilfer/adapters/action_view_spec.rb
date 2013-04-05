@@ -1,5 +1,6 @@
-require 'action_view'
 require 'spec_helper'
+require 'action_view'
+require 'pilfer/adapters/action_view'
 
 describe Pilfer::Adapters::ActionView, type: :feature, adapter: true do
 

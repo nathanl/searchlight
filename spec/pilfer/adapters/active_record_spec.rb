@@ -1,5 +1,6 @@
-require 'active_record'
 require 'spec_helper'
+require 'active_record'
+require 'pilfer/adapters/active_record'
 
 describe Pilfer::Adapters::ActiveRecord, adapter: true do
 
