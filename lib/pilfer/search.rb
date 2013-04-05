@@ -39,7 +39,6 @@ module Pilfer
       self.class.search_methods.each do |method|
         option_value = public_send(method.sub(/\Asearch_/, ''))
         unless option_value.nil? || option_value.to_s.strip == ''
-          # puts "I'm calling #{method} because I have value #{option_value}"
           self.search  = public_send(method)
         end
       end
