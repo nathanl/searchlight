@@ -14,7 +14,7 @@ The basic idea of Pilfer is to build a search by chaining method calls that you 
 For example, if you have a Pilfer search class called `FooSearch`, and you instantiate it like this:
 
 ```ruby
-  foo_search = FooSearch(active: true, name: 'Jimmy', location_in: %w[[NY LA]) # or params[:search]
+  foo_search = FooSearch(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:search]
 ```
 
 ... calling `results` will call the instance methods `search_active`, `search_name`, and `search_location_in`. (If you omit the `active` option, `search_active` won't be called.)
@@ -67,7 +67,7 @@ end
 ### Controller
 
 ```ruby
-# app/controllers/accounts_controller.r
+# app/controllers/accounts_controller.rb
 class AccountsController
 
 def search
@@ -107,10 +107,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install pilfer
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Contributing
 
