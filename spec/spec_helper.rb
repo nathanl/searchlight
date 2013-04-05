@@ -1,3 +1,4 @@
+require 'capybara/rspec'
 require 'pilfer'
 $LOAD_PATH << '.'
 require 'support/mock_model'
