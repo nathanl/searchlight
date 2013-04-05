@@ -5,6 +5,31 @@ Pilfer helps you build searches from options via Ruby methods that you write. It
 [![Build Status](https://secure.travis-ci.org/nathanl/pilfer.png?branch=master)](http://travis-ci.org/nathanl/pilfer)
 [![Code Climate](https://codeclimate.com/github/nathanl/pilfer.png)](https://codeclimate.com/github/nathanl/pilfer)
 
+## Usage
+
+```ruby
+class AccountsSearch < Pilfer::Search
+
+  search_on Account
+
+  searches :contract_id, :invoiced
+
+  def invoiced_search
+    case invoiced
+    when 'fully'
+      search.fully_invoiced
+    when 'partially'
+      search.partially_invoiced
+    when 'never'
+      search.uninvoiced
+    else
+      search
+    end
+  end
+
+end
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
