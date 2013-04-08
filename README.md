@@ -2,10 +2,10 @@
 
 Searchlight helps you build searches from options via Ruby methods that you write.
 
-Searchlight comes with ActiveRecord integration, but can call search methods on any ORM or other object that you wish.
+Searchlight comes with ActiveRecord integration, but can call search methods on any ORM or object that allows chaining search methods.
 
-[![Build Status](https://secure.travis-ci.org/nathanl/pilfer.png?branch=master)](http://travis-ci.org/nathanl/pilfer)
-[![Code Climate](https://codeclimate.com/github/nathanl/pilfer.png)](https://codeclimate.com/github/nathanl/pilfer)
+[![Build Status](https://api.travis-ci.org/nathanl/searchlight.png?branch=master)](https://travis-ci.org/nathanl/searchlight)
+[![Code Climate](https://codeclimate.com/github/nathanl/searchlight.png)](https://codeclimate.com/github/nathanl/searchlight)
 
 ## Overview
 
