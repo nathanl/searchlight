@@ -70,7 +70,8 @@ CitySearch.new(name: 'Nairobi').results.to_sql
 CitySearch.new(country_name_like: 'aust', continent: 'Europe').results.count # => 6
 
 non_megas = CitySearch.new(is_megacity: 'false')
-non_megas.results.to_sql => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 100000"
+non_megas.results.to_sql 
+  # => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 100000"
 non_megas.results.each do |city|
   # ...
 end
