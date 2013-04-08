@@ -28,50 +28,51 @@ The `results` method will then return the return value of the last search method
 Here's an example search class that uses ActiveRecord.
 
 ```ruby
-# app/searches/account_search.rb
-class AccountSearch < Searchlight::Search
+# app/searches/city_search.rb
+class CitySearch < Searchlight::Search
 
-  # Defines the `search_target`
-  search_on Account
+  search_on City.includes(:country)
 
-  # The search options this class knows how to handle
-  searches :contract_id, :invoicing_status, :active
+  searches :name, :population_min, :continent
 
-  # If a `contract_id` option is given, this method will be called
-  def search_contract_id
-    search.where(contract_id: contract_id)
+  # This simple method is auto-defined by the ActiveRecord adapter, but you can override it
+  def search_name
+    search.where(name: name)
   end
 
-  # If an `invoicing` option is given, this method will be called
-  def search_invoicing
-    case invoicing_status
-    when 'partial'
-      search.partially_invoiced
-    when 'complete'
-      search.completely_invoiced
-    when 'never'
-      search.uninvoiced
-    else
-      search
-    end
+  def search_population_min
+    search.where('`cities`.`population` >= ?', population_min)
   end
 
-  # If an `active` option is given, this method will be called
-  def search_active
-    search.where(status: active? ? 'active' : 'inactive')
+  # Reach into other tables
+  def search_continent
+    search.where('`countries`.`continent` = ?', continent)
   end
 
 end
 ```
 
+You can use it like this:
+
+```ruby
+CitySearch.new.results.to_sql                  # => "SELECT `cities`.* FROM `cities` "
+CitySearch.new(name: 'Nairobi').results.to_sql # => "SELECT `cities`.* FROM `cities`  WHERE `cities`.`name` = 'Nairobi'"
+
+search = CitySearch.new(population_min: 3_000_000, continent: 'Europe')
+search.results.to_sql
+  # => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` >= 3000000) AND (`countries`.`continent` = 'Europe')"
+search.results.count # => 4
+names = search.results.map { |city| city.name }.join(', ') #=> "London, Berlin, Moscow, St Petersburg"
+```
+
 ### Controller
 
 ```ruby
-# app/controllers/accounts_controller.rb
-class AccountsController
+# app/controllers/cities_controller.rb
+class CitiesController
 
 def search
-  @search = AccountSearch.new(params[:search])
+  @search = CitySearch.new(params[:search])
 end
 ...
 ```
@@ -82,16 +83,16 @@ end
 ...
 = form_for(search, url: '#') do |f|
   %fieldset
-    = f.label  :contract_id, "Contract"
-    = f.select :contract_id, available_contracts_collection
+    = f.label :name, "Name"
+    = f.input :name
 
   %fieldset
-    = f.label  :invoicing_status, "Invoicing Status"
-    = f.select :invoicing_status, invoice_statuses_collection
+    = f.label  :population_min, "Minimum Population"
+    = f.input :population_min
 
   %fieldset
-    = f.label  :active, "Active?"
-    = f.select :active, [['Active', true], ['Inactive', false], ['Either', nil]]
+    = f.label  :continent, "Continent"
+    = f.select :continent, continents_collection
 ```
 
 ## Installation
