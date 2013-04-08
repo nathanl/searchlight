@@ -11,10 +11,10 @@ Searchlight comes with ActiveRecord integration, but can call search methods on 
 
 The basic idea of Searchlight is to build a search by chaining method calls that you define. It calls methods on the object you specify, based on the options you pass.
 
-For example, if you have a Searchlight search class called `FooSearch`, and you instantiate it like this:
+For example, if you have a Searchlight search class called `YetiSearch`, and you instantiate it like this:
 
 ```ruby
-  foo_search = FooSearch(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:query]
+  yeti_search = YetiSearch(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:search]
 ```
 
 ... calling `results` will call the instance methods `search_active`, `search_name`, and `search_location_in`. (If you omit the `active` option, `search_active` won't be called.)
@@ -149,11 +149,10 @@ end
 
 Searchlight also plays nicely with Rails views.
 
-
 ```ruby
 # app/views/accounts/index.html.haml
 ...
-= form_for(search, url: '#') do |f|
+= form_for(search, url: search_cities_path) do |f|
   %fieldset
     = f.label :name, "Name"
     = f.input :name

@@ -19,7 +19,7 @@ describe 'Searchlight::Adapters::ActionView', type: :feature, adapter: true do
       f.text_field(:paid_amount)
     end
 
-    expect(form).to have_selector("form input[name='query[paid_amount]'][value='15']")
+    expect(form).to have_selector("form input[name='search[paid_amount]'][value='15']")
   end
 
 end
