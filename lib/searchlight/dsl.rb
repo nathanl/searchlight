@@ -1,4 +1,4 @@
-module Pilfer
+module Searchlight
   module DSL
 
     def search_on(target)
@@ -6,7 +6,7 @@ module Pilfer
     end
 
     def searches(*attribute_names)
-      include_new_module "PilferAccessors" do
+      include_new_module "SearchlightAccessors" do
         attr_accessor *attribute_names
 
         # define boolean accessors

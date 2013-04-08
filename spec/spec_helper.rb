@@ -1,5 +1,5 @@
 require 'capybara/rspec'
-require 'pilfer'
+require 'searchlight'
 $LOAD_PATH << '.'
 require 'support/mock_model'
 require 'support/account_search'

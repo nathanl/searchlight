@@ -1,4 +1,4 @@
-module Pilfer
+module Searchlight
   module Adapters
     module ActionView
 
@@ -22,5 +22,5 @@ module Pilfer
   end
 end
 
-Pilfer::Search.send(:include, Pilfer::Adapters::ActionView::InstanceMethods)
-Pilfer::Search.extend(Pilfer::Adapters::ActionView::ClassMethods)
+Searchlight::Search.send(:include, Searchlight::Adapters::ActionView::InstanceMethods)
+Searchlight::Search.extend(Searchlight::Adapters::ActionView::ClassMethods)

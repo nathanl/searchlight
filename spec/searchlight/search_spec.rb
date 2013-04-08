@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Pilfer::Search do
+describe Searchlight::Search do
 
   let(:search_class) { Named::Class.new('SearchClass', described_class) }
   let(:options) { Hash.new }
@@ -70,8 +70,8 @@ describe Pilfer::Search do
         search_class.searches :foo
       end
 
-      it "includes a PilferAccessors module" do
-        accessors_module = search_class.ancestors.detect {|a| a.name == 'PilferAccessors' }
+      it "includes a SearchlightAccessors module" do
+        accessors_module = search_class.ancestors.detect {|a| a.name == 'SearchlightAccessors' }
         expect(accessors_module).to be_a(Named::Module)
       end
 

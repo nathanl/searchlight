@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'pilfer/version'
+require 'searchlight/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "pilfer"
-  spec.version       = Pilfer::VERSION
+  spec.name          = "searchlight"
+  spec.version       = Searchlight::VERSION
   spec.authors       = ["Nathan Long", "Adam Hunter"]
   spec.email         = ["nathanmlong@gmail.com", "adamhunter@me.com"]
-  spec.description   = %q{Pilfer helps you build searches from options via Ruby methods that you write. It's like Ransack, but less so.}
-  spec.summary       = %q{Pilfer helps you build searches from options via Ruby methods that you write. It's like Ransack, but less so.}
-  spec.homepage      = "https://github.com/nathanl/pilfer"
+  spec.description   = %q{Searchlight helps you build searches from options via Ruby methods that you write.}
+  spec.summary       = %q{Searchlight helps you build searches from options via Ruby methods that you write.}
+  spec.homepage      = "https://github.com/nathanl/searchlight"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)

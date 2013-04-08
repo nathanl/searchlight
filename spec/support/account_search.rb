@@ -1,4 +1,4 @@
-class AccountSearch < Pilfer::Search
+class AccountSearch < Searchlight::Search
 
   search_on MockModel
 

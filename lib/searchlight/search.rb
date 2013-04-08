@@ -1,6 +1,6 @@
 require 'set'
 
-module Pilfer
+module Searchlight
   class Search
     extend DSL
 

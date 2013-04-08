@@ -1,17 +1,17 @@
-# Pilfer
+# Searchlight
 
-Pilfer helps you build searches from options via Ruby methods that you write. It's like Ransack, but less so.
+Searchlight helps you build searches from options via Ruby methods that you write.
 
-Pilfer comes with ActiveRecord integration, but can call search methods on any ORM or other object that you wish.
+Searchlight comes with ActiveRecord integration, but can call search methods on any ORM or other object that you wish.
 
 [![Build Status](https://secure.travis-ci.org/nathanl/pilfer.png?branch=master)](http://travis-ci.org/nathanl/pilfer)
 [![Code Climate](https://codeclimate.com/github/nathanl/pilfer.png)](https://codeclimate.com/github/nathanl/pilfer)
 
 ## Overview
 
-The basic idea of Pilfer is to build a search by chaining method calls that you define. It calls methods on the object you specify, based on the options you pass.
+The basic idea of Searchlight is to build a search by chaining method calls that you define. It calls methods on the object you specify, based on the options you pass.
 
-For example, if you have a Pilfer search class called `FooSearch`, and you instantiate it like this:
+For example, if you have a Searchlight search class called `FooSearch`, and you instantiate it like this:
 
 ```ruby
   foo_search = FooSearch(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:query]
@@ -29,7 +29,7 @@ Here's an example search class that uses ActiveRecord.
 
 ```ruby
 # app/searches/account_search.rb
-class AccountSearch < Pilfer::Search
+class AccountSearch < Searchlight::Search
 
   # Defines the `search_target`
   search_on Account
@@ -98,7 +98,7 @@ end
 
 Add this line to your application's Gemfile:
 
-    gem 'pilfer'
+    gem 'searchlight'
 
 And then execute:
 
@@ -106,7 +106,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install pilfer
+    $ gem install searchlight
 
 ## Contributing
 

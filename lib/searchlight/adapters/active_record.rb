@@ -1,4 +1,4 @@
-module Pilfer
+module Searchlight
   module Adapters
     module ActiveRecord
 
@@ -11,7 +11,7 @@ module Pilfer
         def searches(*attribute_names)
           super
 
-          include_new_module "PilferActiveRecordSearches" do
+          include_new_module "SearchlightActiveRecordSearches" do
             attribute_names.each do |attribute_name|
               define_method("search_#{attribute_name}") do
                 search.where(attribute_name => public_send(attribute_name))
@@ -27,4 +27,4 @@ module Pilfer
   end
 end
 
-Pilfer::Search.extend(Pilfer::Adapters::ActiveRecord)
+Searchlight::Search.extend(Searchlight::Adapters::ActiveRecord)

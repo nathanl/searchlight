@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe 'Pilfer::Adapters::ActionView', type: :feature, adapter: true do
+describe 'Searchlight::Adapters::ActionView', type: :feature, adapter: true do
 
   before :all do
-    require 'pilfer/adapters/action_view'
+    require 'searchlight/adapters/action_view'
     require 'action_view'
   end
 
