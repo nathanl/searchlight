@@ -123,9 +123,7 @@ You can subclass an existing search class and support all the same options with 
 
 ```ruby
 class SmallTownSearch < CitySearch
-
   search_on search_target.where("`cities`.`population` < ?", 1_000)
-
 end
 
 SmallTownSearch.new(country_name_like: 'Norfolk').results.to_sql
@@ -149,7 +147,7 @@ end
 Searchlight also plays nicely with Rails views.
 
 ```ruby
-# app/views/accounts/index.html.haml
+# app/views/cities/index.html.haml
 ...
 = form_for(search, url: search_cities_path) do |f|
   %fieldset
