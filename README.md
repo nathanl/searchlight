@@ -2,7 +2,7 @@
 
 Searchlight helps you build searches from options via Ruby methods that you write.
 
-Searchlight comes with ActiveRecord integration, but can call search methods on any ORM or object that allows chaining search methods.
+Searchlight comes with ActiveRecord integration, but can work with any ORM or object that allows chaining search methods.
 
 [![Build Status](https://api.travis-ci.org/nathanl/searchlight.png?branch=master)](https://travis-ci.org/nathanl/searchlight)
 [![Code Climate](https://codeclimate.com/github/nathanl/searchlight.png)](https://codeclimate.com/github/nathanl/searchlight)
@@ -62,8 +62,10 @@ end
 Here are some example searches.
 
 ```ruby
-CitySearch.new.results.to_sql                  # => "SELECT `cities`.* FROM `cities` "
-CitySearch.new(name: 'Nairobi').results.to_sql # => "SELECT `cities`.* FROM `cities`  WHERE `cities`.`name` = 'Nairobi'"
+CitySearch.new.results.to_sql
+  # => "SELECT `cities`.* FROM `cities` "
+CitySearch.new(name: 'Nairobi').results.to_sql
+  # => "SELECT `cities`.* FROM `cities`  WHERE `cities`.`name` = 'Nairobi'"
 
 CitySearch.new(country_name_like: 'aust', continent: 'Europe').results.count # => 6
 
