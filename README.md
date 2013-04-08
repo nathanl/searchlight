@@ -53,11 +53,7 @@ class CitySearch < Searchlight::Search
   # For every option, we add an accessor that coerces to a boolean,
   # considering 'false', 0, and '0' to be false
   def search_is_megacity
-    if is_megacity?
-      search.where('`cities`.`population` >= ?', 10_000_000)
-    else
-      search.where('`cities`.`population` < ?', 10_000_000)
-    end
+    search.where("`cities`.`population` #{is_megacity? ? '>=' : '<'} ?", 10_000_000)
   end
 
 end
