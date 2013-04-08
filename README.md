@@ -33,39 +33,79 @@ class CitySearch < Searchlight::Search
 
   search_on City.includes(:country)
 
-  searches :name, :population_min, :continent
+  searches :name, :continent, :country_name_like, :is_megacity
 
   # This simple method is auto-defined by the ActiveRecord adapter, but you can override it
-  def search_name
-    search.where(name: name)
-  end
-
-  def search_population_min
-    search.where('`cities`.`population` >= ?', population_min)
-  end
+  # def search_name
+  #   search.where(name: name)
+  # end
 
   # Reach into other tables
   def search_continent
     search.where('`countries`.`continent` = ?', continent)
   end
 
+  # Other kinds of queries
+  def search_country_name_like
+    search.where("`countries`.`name` LIKE ?", "%#{country_name_like}%")
+  end
+
+  # For every option, we add an accessor that coerces to a boolean,
+  # considering 'false', 0, and '0' to be false
+  def search_is_megacity
+    if is_megacity?
+      search.where('`cities`.`population` >= ?', 10_000_000)
+    else
+      search.where('`cities`.`population` < ?', 10_000_000)
+    end
+  end
+
 end
 ```
 
-You can use it like this:
+Here are some example searches.
 
 ```ruby
 CitySearch.new.results.to_sql                  # => "SELECT `cities`.* FROM `cities` "
 CitySearch.new(name: 'Nairobi').results.to_sql # => "SELECT `cities`.* FROM `cities`  WHERE `cities`.`name` = 'Nairobi'"
 
-search = CitySearch.new(population_min: 3_000_000, continent: 'Europe')
-search.results.to_sql
-  # => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` >= 3000000) AND (`countries`.`continent` = 'Europe')"
-search.results.count # => 4
-names = search.results.map { |city| city.name }.join(', ') #=> "London, Berlin, Moscow, St Petersburg"
+CitySearch.new(country_name_like: 'aust', continent: 'Europe').results.count # => 6
+
+non_megas = CitySearch.new(is_megacity: 'false')
+non_megas.results.to_sql => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 100000
+non_megas.each do |city|
+  # ...
+end
+
 ```
 
-### Controller
+### Defining Defaults
+
+```ruby
+
+class CitySearch < Searchlight::Search
+
+  #...
+
+  def initialize(options = {})
+    super
+    self.continent ||= 'Asia'
+  end
+
+  #...
+end
+
+CitySearch.new.results.to_sql
+  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Asia')"
+CitySearch.new(continent: 'Europe').results.to_sql
+  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Europe')"
+
+```
+
+
+### Usage in Rails
+
+You can do something like this in your controller:
 
 ```ruby
 # app/controllers/cities_controller.rb
@@ -77,7 +117,9 @@ end
 ...
 ```
 
-### View
+Searchlight also plays nicely with Rails views.
+
+
 ```ruby
 # app/views/accounts/index.html.haml
 ...
@@ -87,8 +129,12 @@ end
     = f.input :name
 
   %fieldset
-    = f.label  :population_min, "Minimum Population"
-    = f.input :population_min
+    = f.label :country_name_like, "Country Name Like"
+    = f.input :country_name_like
+
+  %fieldset
+    = f.label  :is_megacity, "Megacity?"
+    = f.select :is_megacity, [['Yes', true], ['No', false], ['Either', '']]
 
   %fieldset
     = f.label  :continent, "Continent"
@@ -116,3 +162,7 @@ Or install it yourself as:
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## Shout Outs
+
+Thanks to [TMA](http://tma1.com) for supporting the development of Searchlight.
