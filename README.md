@@ -73,7 +73,7 @@ CitySearch.new(country_name_like: 'aust', continent: 'Europe').results.count # =
 
 non_megas = CitySearch.new(is_megacity: 'false')
 non_megas.results.to_sql => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 100000"
-non_megas.each do |city|
+non_megas.results.each do |city|
   # ...
 end
 
@@ -129,10 +129,8 @@ class SmallTownSearch < CitySearch
 
 end
 
-
 SmallTownSearch.new(country_name_like: 'Norfolk').results.to_sql
   => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 1000) AND (`countries`.`name` LIKE '%Norfolk%')"
-
 ```
 
 ## Usage in Rails
