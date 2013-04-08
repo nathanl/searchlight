@@ -4,7 +4,7 @@ module Searchlight
 
       def search_on(target)
         super
-        extend Search if target.is_a?(::ActiveRecord::Base)
+        extend Search if target.is_a?(::ActiveRecord::Base) || target.is_a?(::ActiveRecord::Relation)
       end
 
       module Search
