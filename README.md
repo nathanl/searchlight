@@ -72,7 +72,7 @@ CitySearch.new(name: 'Nairobi').results.to_sql # => "SELECT `cities`.* FROM `cit
 CitySearch.new(country_name_like: 'aust', continent: 'Europe').results.count # => 6
 
 non_megas = CitySearch.new(is_megacity: 'false')
-non_megas.results.to_sql => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 100000
+non_megas.results.to_sql => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 100000"
 non_megas.each do |city|
   # ...
 end
@@ -99,11 +99,43 @@ CitySearch.new.results.to_sql
   => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Asia')"
 CitySearch.new(continent: 'Europe').results.to_sql
   => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Europe')"
+```
+
+### Overriding Accessors
+
+All accessors are defined in modules, so you can access the original values via `super` and tweak them if you like.
+
+```ruby
+class CitySearch < Searchlight::Search
+
+  def continent
+    super.to_s.reverse
+  end
+
+end
+
+CitySearch.new(continent: 'Europe').results.to_sql
+  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'eporuE')"
+```
+
+### Subclassing
+
+You can subclass an existing search class and support all the same options with a different search target. This may be useful for single table inheritance, for example. You can also use `search_target` to get the superclass's `search_on` value, so you can do this:
+
+```ruby
+class SmallTownSearch < CitySearch
+
+  search_on search_target.where("`cities`.`population` < ?", 1_000)
+
+end
+
+
+SmallTownSearch.new(country_name_like: 'Norfolk').results.to_sql
+  => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 1000) AND (`countries`.`name` LIKE '%Norfolk%')"
 
 ```
 
-
-### Usage in Rails
+## Usage in Rails
 
 You can do something like this in your controller:
 
@@ -165,4 +197,5 @@ Or install it yourself as:
 
 ## Shout Outs
 
-Thanks to [TMA](http://tma1.com) for supporting the development of Searchlight.
+- The excellent [Mr. Adam Hunter](https://github.com/adamhunter), co-creator of Searchlight
+- [TMA](http://tma1.com) for supporting the development of Searchlight.
