@@ -16,6 +16,10 @@ module Searchlight
           []
         end
 
+        def persisted?
+          false
+        end
+
       end
 
     end

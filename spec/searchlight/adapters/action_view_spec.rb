@@ -22,4 +22,8 @@ describe 'Searchlight::Adapters::ActionView', type: :feature, adapter: true do
     expect(form).to have_selector("form input[name='search[paid_amount]'][value='15']")
   end
 
+  it "tells the form that it is not persisted" do
+    expect(search).not_to be_persisted
+  end
+
 end
