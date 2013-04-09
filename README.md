@@ -9,7 +9,7 @@ Searchlight comes with ActiveRecord integration, but can work with any ORM or ob
 
 ## Overview
 
-The basic idea of Searchlight is to build a search by chaining method calls that you define. It calls methods on the object you specify, based on the options you pass.
+The basic idea of Searchlight is to build a search by chaining method calls that you define. It calls **public** methods on the object you specify, based on the options you pass.
 
 For example, if you have a Searchlight search class called `YetiSearch`, and you instantiate it like this:
 

@@ -1,20 +1,9 @@
-require 'set'
-
 module Searchlight
   class Search
     extend DSL
 
     def self.search_target
       defined?(@search_target) ? @search_target : superclass.search_target
-    end
-
-    def self.search_methods
-      defined?(@search_methods) ? @search_methods : superclass.search_methods
-    end
-
-    def self.method_added(name)
-      @search_methods ||= Set.new
-      search_methods << name.to_s if name.to_s.start_with?('search_')
     end
 
     def initialize(options = {})
@@ -35,8 +24,12 @@ module Searchlight
 
     private
 
+    def search_methods
+      public_methods.map(&:to_s).select { |m| m.start_with?('search_') }
+    end
+
     def run
-      self.class.search_methods.each do |method|
+      search_methods.each do |method|
         new_search  = run_search_method(method)
         self.search = new_search unless new_search.nil?
       end

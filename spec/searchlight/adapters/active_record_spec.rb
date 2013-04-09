@@ -19,7 +19,7 @@ describe 'Searchlight::Adapters::ActiveRecord', adapter: true do
   end
 
   it "adds search_elephants to the search_methods array" do
-    expect(search_class.search_methods).to include('search_elephants')
+    expect(search_instance.send(:search_methods)).to include('search_elephants')
   end
 
   it "defines search methods that call where on the search target" do

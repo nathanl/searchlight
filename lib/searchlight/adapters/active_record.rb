@@ -18,8 +18,6 @@ module Searchlight
               end
             end
           end
-
-          attribute_names.each { |attribute_name| method_added("search_#{attribute_name}") }
         end
       end
 
