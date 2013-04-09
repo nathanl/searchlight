@@ -169,6 +169,20 @@ Searchlight also plays nicely with Rails views.
   = f.submit "Search"
 ```
 
+## Adapters
+
+When you call `search_on` in your Searchlight class, Searchlight checks whether the search target comes from ActiveRecord, and, if so, extends your class with ActiveRecord behavior.
+
+This behavior is quite simple: it's just that when you declare, for example, `searches :name`, it automatically defines this method:
+
+```ruby
+  def search_name
+    search.where(name: name)
+  end
+```
+
+We'd love to get pull requests for other adapters. :)
+
 ## Installation
 
 Add this line to your application's Gemfile:
