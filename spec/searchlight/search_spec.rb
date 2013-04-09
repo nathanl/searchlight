@@ -15,6 +15,8 @@ describe Searchlight::Search do
       expect(search.beak_color).to eq('mauve')
     end
 
+    it "removes blank options from arrays"
+
   end
 
   describe "search_on" do

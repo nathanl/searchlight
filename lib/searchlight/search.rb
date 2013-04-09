@@ -37,12 +37,21 @@ module Searchlight
 
     def run
       self.class.search_methods.each do |method|
-        option_value = public_send(method.sub(/\Asearch_/, ''))
-        unless option_value.nil? || option_value.to_s.strip == ''
-          self.search  = public_send(method)
-        end
+        new_search  = run_search_method(method)
+        self.search = new_search unless new_search.nil?
       end
       search
+    end
+
+    def run_search_method(method_name)
+      option_value = public_send(method_name.sub(/\Asearch_/, ''))
+      option_value = option_value.reject { |item| blank_value?(item) } if option_value.respond_to?(:reject)
+      public_send(method_name) unless blank_value?(option_value)
+    end
+
+    # Note that false is not blank
+    def blank_value?(value)
+      (value.respond_to?(:empty?) && value.empty?) || value.nil? || value.to_s.strip == ''
     end
 
   end
