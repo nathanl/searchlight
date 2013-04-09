@@ -149,14 +149,14 @@ Searchlight also plays nicely with Rails views.
 ```ruby
 # app/views/cities/index.html.haml
 ...
-= form_for(search, url: search_cities_path) do |f|
+= form_for(@search, url: search_cities_path) do |f|
   %fieldset
-    = f.label :name, "Name"
-    = f.input :name
+    = f.label      :name, "Name"
+    = f.text_field :name
 
   %fieldset
-    = f.label :country_name_like, "Country Name Like"
-    = f.input :country_name_like
+    = f.label      :country_name_like, "Country Name Like"
+    = f.text_field :country_name_like
 
   %fieldset
     = f.label  :is_megacity, "Megacity?"
@@ -164,7 +164,9 @@ Searchlight also plays nicely with Rails views.
 
   %fieldset
     = f.label  :continent, "Continent"
-    = f.select :continent, continents_collection
+    = f.select :continent, ['Africa', 'Asia', 'Europe'], include_blank: true
+
+  = f.submit "Search"
 ```
 
 ## Installation
