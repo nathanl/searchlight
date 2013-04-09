@@ -18,7 +18,7 @@ module Searchlight
     end
 
     def initialize(options = {})
-      options.each { |key, value| public_send("#{key}=", value) }
+      options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
     end
 
     def search
