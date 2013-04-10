@@ -59,7 +59,7 @@ describe Searchlight::Search do
     }
 
     it "keeps a unique list of the search methods" do
-      expect(search.send(:search_methods)).to eq(['search_bees', 'search_bats'])
+      expect(search.send(:search_methods).map(&:to_s).sort).to eq(['search_bats', 'search_bees'])
     end
 
   end
