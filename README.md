@@ -185,6 +185,10 @@ We'd love to get pull requests for other ORM adapters. :)
 
 Similarly, Searchlight adds ActionView-friendly methods to your classes if it sees that `ActionView` is a defined constant.
 
+## Compatibility
+
+For any given version, check the .travis.yml file to see what Ruby versions we're testing for compatibility.
+
 ## Installation
 
 Add this line to your application's Gemfile:
