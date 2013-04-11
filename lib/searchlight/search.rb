@@ -37,7 +37,7 @@ module Searchlight
     end
 
     def run_search_method(method_name)
-      option_value = public_send(method_name.sub(/\Asearch_/, ''))
+      option_value = instance_variable_get("@#{method_name.sub(/\Asearch_/, '')}")
       option_value = option_value.reject { |item| blank_value?(item) } if option_value.respond_to?(:reject)
       public_send(method_name) unless blank_value?(option_value)
     end
