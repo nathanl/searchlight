@@ -15,7 +15,32 @@ describe Searchlight::Search do
       expect(search.beak_color).to eq('mauve')
     end
 
-    it "removes blank options from arrays"
+    describe "handling invalid options" do
+
+      context "if the option name starts with 'search_'" do
+
+        let(:options) { {search_stink_factor: 4} }
+
+        it "suggests that perhaps you meant to omit that" do
+          expect { search }.to raise_error(
+            Searchlight::Search::UndefinedOption,
+            "No known option called 'search_stink_factor'. Did you just mean 'stink_factor'?"
+          )
+        end
+
+      end
+
+      context "otherwise" do
+
+        let(:options) { {genus: 'Mellivora'} }
+
+        it "tells you no such option is defined" do
+          expect { search }.to raise_error( Searchlight::Search::UndefinedOption, "No known option called 'genus'.")
+        end
+
+      end
+
+    end
 
   end
 

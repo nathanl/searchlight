@@ -2,6 +2,7 @@ require 'named'
 require 'searchlight/version'
 
 module Searchlight
+  Error = Class.new(StandardError)
 end
 
 require 'searchlight/dsl'

@@ -187,7 +187,7 @@ Similarly, Searchlight adds ActionView-friendly methods to your classes if it se
 
 ## Compatibility
 
-For any given version, check the .travis.yml file to see what Ruby versions we're testing for compatibility.
+For any given version, check `.travis.yml` to see what Ruby versions we're testing for compatibility.
 
 ## Installation
 
