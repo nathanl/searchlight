@@ -8,8 +8,8 @@ module Searchlight
 
     def initialize(options = {})
       options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
-    rescue NoMethodError => e;
-      raise UndefinedOption, e.name
+    rescue NoMethodError => e
+      raise UndefinedOption.new(e.name, self.class.name)
     end
 
     def search
@@ -51,13 +51,17 @@ module Searchlight
 
     class UndefinedOption < StandardError
       attr_accessor :message
-      def initialize(option_name)
+      def initialize(option_name, search_class)
         option_name = option_name.to_s.sub(/=\Z/, '')
-        self.message = "No known option called '#{option_name}'."
+        self.message = "#{search_class} doesn't search '#{option_name}'."
         if option_name.start_with?('search_')
           # Gee golly, I'm so helpful!
           self.message << " Did you just mean '#{option_name.sub(/\Asearch_/, '')}'?"
         end
+      end
+
+      def to_s
+        message
       end
     end
 
