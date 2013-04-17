@@ -20,7 +20,7 @@ module Searchlight
           eval_string = attribute_names.map { |attribute_name|
             <<-UNICORN_BILE
             def search_#{attribute_name}
-              search.where(#{attribute_name} => public_send("#{attribute_name}"))
+              search.where('#{attribute_name}' => public_send("#{attribute_name}"))
             end
             UNICORN_BILE
           }.join

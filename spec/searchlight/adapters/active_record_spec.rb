@@ -27,4 +27,9 @@ describe 'Searchlight::Adapters::ActiveRecord', adapter: true do
     expect(search_instance.search.called_methods).to eq([:where])
   end
 
+  it "sets arguments properly in the defined method" do
+    search_instance.search.should_receive(:where).with('elephants' => 'yes, please')
+    search_instance.search_elephants
+  end
+
 end
