@@ -105,16 +105,19 @@ CitySearch.new(continent: 'Europe').results.to_sql
 All accessors are defined in modules, so you can access the original values via `super` and tweak them if you like.
 
 ```ruby
-class CitySearch < Searchlight::Search
+class PersonSearch < Searchlight::Search
 
-  def continent
-    super.to_s.reverse
+  def names
+    # Make sure this is an array
+    Array(super)
+  end
+
+  def searches_names
+    search.where("name IN (?)", names)
   end
 
 end
 
-CitySearch.new(continent: 'Europe').results.to_sql
-  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'eporuE')"
 ```
 
 ### Subclassing
