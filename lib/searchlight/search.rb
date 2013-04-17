@@ -9,13 +9,10 @@ module Searchlight
     def initialize(options = {})
       options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
     rescue NoMethodError => e
-      option_given = e.name.to_s.sub(/=\Z/, '')
-      message = "No known option called '#{option_given}'."
-      if e.name.to_s.start_with?('search_')
-        option_guess = option_given.sub(/\Asearch_/, '')
-        message << " Did you just mean '#{option_guess}'?"
-      end
-      raise UndefinedOption.new(message)
+      option  = e.name.to_s.sub(/=\Z/, '')
+      message = "No known option called '#{option}'."
+      message << " Did you just mean '#{option.sub(/\Asearch_/, '')}'?" if option.start_with?('search_')
+      raise UndefinedOption, message
     end
 
     def search

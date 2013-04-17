@@ -6,25 +6,28 @@ module Searchlight
     end
 
     def searches(*attribute_names)
-      include_new_module "SearchlightAccessors" do
-        attr_accessor *attribute_names
 
-        # define boolean accessors
-        attribute_names.each do |attribute_name|
-          define_method("#{attribute_name}?") do
-            # Treat 0 (eg, from checkboxes) as false
-            !['0', 'false', ''].include?(public_send(attribute_name).to_s.strip) 
+      # Ensure this class only adds one accessors module to the ancestors chain
+      if @accessors_module.nil?
+        @accessors_module = Named::Module.new("SearchlightAccessors(#{self})") do
+          private
+          # Treat 0 (eg, from checkboxes) as false
+          def truthy?(value)
+            !(['0', 'false', ''].include?(value.to_s.strip))
           end
         end
+        include @accessors_module
       end
+
+      eval_string = "attr_accessor *#{attribute_names}\n"
+      eval_string << attribute_names.map { |attribute_name|
+        <<-LEPRECHAUN_JUICE
+          def #{attribute_name}?
+            truthy?(public_send("#{attribute_name}"))
+          end
+        LEPRECHAUN_JUICE
+      }.join
+      @accessors_module.module_eval(eval_string, __FILE__, __LINE__)
     end
-
-    private
-
-    # So that we can allow calling `super` in submodules and the base class.
-    def include_new_module(module_name, &content)
-      include Named::Module.new(module_name, &content)
-    end
-
   end
 end

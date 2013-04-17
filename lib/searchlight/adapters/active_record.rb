@@ -11,13 +11,21 @@ module Searchlight
         def searches(*attribute_names)
           super
 
-          include_new_module "SearchlightActiveRecordSearches" do
-            attribute_names.each do |attribute_name|
-              define_method("search_#{attribute_name}") do
-                search.where(attribute_name => public_send(attribute_name))
-              end
-            end
+          # Ensure this class only adds one search module to the ancestors chain
+          if @ar_searches_module.nil?
+            @ar_searches_module = Named::Module.new("SearchlightActiveRecordSearches(#{self})")
+            include @ar_searches_module
           end
+
+          eval_string = attribute_names.map { |attribute_name|
+            <<-UNICORN_BILE
+            def search_#{attribute_name}
+              search.where(#{attribute_name} => public_send("#{attribute_name}"))
+            end
+            UNICORN_BILE
+          }.join
+
+          @ar_searches_module.module_eval(eval_string, __FILE__, __LINE__)
         end
       end
 

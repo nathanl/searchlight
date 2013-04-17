@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Searchlight::Search do
 
-  let(:search_class) { Named::Class.new('SearchClass', described_class) }
+  let(:search_class) { Named::Class.new('ExampleSearch', described_class) }
   let(:options) { Hash.new }
   let(:search) { search_class.new(options) }
 
@@ -71,7 +71,7 @@ describe Searchlight::Search do
   describe "search_methods" do
 
     let(:search_class) {
-      Named::Class.new('SearchClass', described_class) do
+      Named::Class.new('ExampleSearch', described_class) do
         def search_bees
         end
 
@@ -95,11 +95,14 @@ describe Searchlight::Search do
 
       before :each do
         search_class.searches :foo
+        search_class.searches :bar
+        search_class.searches :stuff
       end
 
-      it "includes a SearchlightAccessors module" do
-        accessors_module = search_class.ancestors.detect {|a| a.name == 'SearchlightAccessors' }
-        expect(accessors_module).to be_a(Named::Module)
+      it "includes exactly one SearchlightAccessors module for this class" do
+        accessors_modules = search_class.ancestors.select {|a| a.name =~ /\ASearchlightAccessors/ }
+        expect(accessors_modules.length).to eq(1)
+        expect(accessors_modules.first).to be_a(Named::Module)
       end
 
       it "adds a getter" do
