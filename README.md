@@ -123,12 +123,29 @@ CitySearch.new(continent: 'Europe').results.to_sql
   => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Europe')"
 ```
 
-### Overriding Accessors
+### Accessors
 
-All accessors are defined in modules, so you can access the original values via `super` and tweak them if you like.
+For each search option, Searchlight defines two accessors: one for a value, and one for a boolean.
+
+For example, if your class `searches :awesomeness` and gets instantiated like:
+
+```ruby
+search = MySearchClass(awesomeness: 'Xtreme')
+```
+
+... your search methods can use:
+
+- `awesomeness` to retrive the given value, `'Xtreme'`
+- `awesomeness?` to get a boolean version: `true`
+
+The boolean conversion is form-friendly, so that `0`, `'0'`, and `'false'` are considered `false`.
+
+All accessors are defined in modules, so you can override them and use `super` to call the original methods.
 
 ```ruby
 class PersonSearch < Searchlight::Search
+
+  searches :names, :awesomeness
 
   def names
     # Make sure this is an array and never search for Jimmy.
@@ -140,8 +157,12 @@ class PersonSearch < Searchlight::Search
     search.where("name IN (?)", names)
   end
 
-end
+  def awesomeness?
+    # Disagree about what is awesome
+    !super
+  end
 
+end
 ```
 
 ### Subclassing
