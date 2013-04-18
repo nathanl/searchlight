@@ -17,7 +17,7 @@ For example, if you have a Searchlight search class called `YetiSearch`, and you
   yeti_search = YetiSearch(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:search]
 ```
 
-... calling `results` on the instance will, in no particular order, call `search_active`, `search_name`, and `search_location_in` on it. If you omit the `active` option, `search_active` won't be called.
+... calling `results` on the instance will build a search by chaining calls to `search_active`, `search_name`, and `search_location`.
 
 The `results` method will then return the return value of the last search method. If you're using ActiveRecord, this would be an `ActiveRecord::Relation`, and you can then call `each` to loop through the results, `to_sql` to get the generated query, etc.
 
@@ -25,7 +25,35 @@ The `results` method will then return the return value of the last search method
 
 ### Search class
 
-Here's an example search class.
+A search class has three main parts: a target, options, and methods. For example:
+
+```ruby
+class PersonSearch < Searchlight::Search
+
+  # The search target; in this case, an ActiveRecord model.
+  search_on Person
+
+  # The options the search understands. Supply any combination of them to an instance.
+  searches :first_name, :last_name
+
+  # A search method.
+  def search_first_name
+    # If this is the first search method called, `search` here will be
+    # the search target, namely, `Person`.
+    # `first_name` is an automatically-defined accessor for the option value.
+    search.where(first_name: first_name)
+  end
+
+  # Another search method.
+  def search_first_name
+    # If this is the second search method called, `search` here will be
+    # whatever `search_first_name` returned.
+    search.where(first_name: first_name)
+  end
+end
+```
+
+Here's a fuller example search class.
 
 ```ruby
 # app/searches/city_search.rb
@@ -34,7 +62,6 @@ class CitySearch < Searchlight::Search
   # `City` here is an ActiveRecord model (see notes below on the adapter)
   search_on City.includes(:country)
 
-  # This defines the options the search understands. Supply any combination of them.
   searches :name, :continent, :country_name_like, :is_megacity
 
   # This simple method is auto-defined by the ActiveRecord adapter; that's all it does.
@@ -78,7 +105,6 @@ non_megas.results.to_sql
 non_megas.results.each do |city|
   # ...
 end
-
 ```
 
 ### Defining Defaults
@@ -182,7 +208,6 @@ class CitiesController < ApplicationController
   end
 end
 ```
-
 ## Adapters
 
 When you call `search_on` in your Searchlight class, Searchlight checks whether the search target comes from ActiveRecord, and, if so, extends your class with ActiveRecord behavior.
