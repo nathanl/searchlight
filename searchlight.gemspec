@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rails",     ">= 3"
   spec.add_development_dependency "capybara",  "~> 2.0"
+  spec.add_development_dependency "simplecov", "~> 0.7"
 end

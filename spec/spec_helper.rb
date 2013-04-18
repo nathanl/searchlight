@@ -1,4 +1,6 @@
 require 'capybara/rspec'
+require 'simplecov'
+SimpleCov.start
 require 'searchlight'
 $LOAD_PATH << '.'
 require 'support/mock_model'
