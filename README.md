@@ -17,25 +17,28 @@ For example, if you have a Searchlight search class called `YetiSearch`, and you
   yeti_search = YetiSearch(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:search]
 ```
 
-... calling `results` will call the instance methods `search_active`, `search_name`, and `search_location_in`. (If you omit the `active` option, `search_active` won't be called.)
+... calling `results` on the instance will, in no particular order, call `search_active`, `search_name`, and `search_location_in` on it. If you omit the `active` option, `search_active` won't be called.
 
-The `results` method will then return the return value of the last search method. If you're using ActiveRecord, this would be an `ActiveRecord::Relation`. You can then call `each` to loop through the results, `to_sql` to get the generated query, etc.
+The `results` method will then return the return value of the last search method. If you're using ActiveRecord, this would be an `ActiveRecord::Relation`, and you can then call `each` to loop through the results, `to_sql` to get the generated query, etc.
 
 ## Usage
 
 ### Search class
 
-Here's an example search class that uses ActiveRecord.
+Here's an example search class.
 
 ```ruby
 # app/searches/city_search.rb
 class CitySearch < Searchlight::Search
 
+  # `City` here is an ActiveRecord model (see notes below on the adapter)
   search_on City.includes(:country)
 
+  # This defines the options the search understands. Supply any combination of them.
   searches :name, :continent, :country_name_like, :is_megacity
 
-  # This simple method is auto-defined by the ActiveRecord adapter, but you can override it
+  # This simple method is auto-defined by the ActiveRecord adapter; that's all it does.
+  # If you want something fancier, just define your own.
   # def search_name
   #   search.where(name: name)
   # end
@@ -50,7 +53,7 @@ class CitySearch < Searchlight::Search
     search.where("`countries`.`name` LIKE ?", "%#{country_name_like}%")
   end
 
-  # For every option, we add an accessor that coerces to a boolean,
+  # For every option, we also add an accessor that coerces to a boolean,
   # considering 'false', 0, and '0' to be false
   def search_is_megacity
     search.where("`cities`.`population` #{is_megacity? ? '>=' : '<'} ?", 10_000_000)
@@ -108,8 +111,9 @@ All accessors are defined in modules, so you can access the original values via 
 class PersonSearch < Searchlight::Search
 
   def names
-    # Make sure this is an array
-    Array(super)
+    # Make sure this is an array and never search for Jimmy.
+    # Jimmy is a private man. An old-fashioned man. Leave him be.
+    Array(super).reject { |name| name == 'Jimmy' }
   end
 
   def searches_names
@@ -122,7 +126,15 @@ end
 
 ### Subclassing
 
-You can subclass an existing search class and support all the same options with a different search target. This may be useful for single table inheritance, for example. You can also use `search_target` to get the superclass's `search_on` value, so you can do this:
+You can subclass an existing search class and support all the same options with a different search target. This may be useful for single table inheritance, for example. 
+
+```ruby
+class VillageSearch < CitySearch
+  search_on Village
+end
+```
+
+You can also use `search_target` to get the superclass's `search_on` value, so you can do this:
 
 ```ruby
 class SmallTownSearch < CitySearch
@@ -135,19 +147,7 @@ SmallTownSearch.new(country_name_like: 'Norfolk').results.to_sql
 
 ## Usage in Rails
 
-You can do something like this in your controller:
-
-```ruby
-# app/controllers/cities_controller.rb
-class CitiesController
-
-def search
-  @search = CitySearch.new(params[:search])
-end
-...
-```
-
-Searchlight also plays nicely with Rails views.
+Searchlight plays nicely with Rails views.
 
 ```ruby
 # app/views/cities/index.html.haml
@@ -170,6 +170,18 @@ Searchlight also plays nicely with Rails views.
     = f.select :continent, ['Africa', 'Asia', 'Europe'], include_blank: true
 
   = f.submit "Search"
+```
+
+As long as your form submits options your search understands, you can easily hook it up in your controller:
+
+```ruby
+# app/controllers/cities_controller.rb
+class CitiesController
+
+def search
+  @search = CitySearch.new(params[:search])
+end
+...
 ```
 
 ## Adapters
@@ -216,5 +228,5 @@ Or install it yourself as:
 
 ## Shout Outs
 
-- The excellent [Mr. Adam Hunter](https://github.com/adamhunter), co-creator of Searchlight
+- The excellent [Mr. Adam Hunter](https://github.com/adamhunter), co-creator of Searchlight.
 - [TMA](http://tma1.com) for supporting the development of Searchlight.
