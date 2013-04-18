@@ -101,28 +101,6 @@ non_megas.results.each do |city|
 end
 ```
 
-### Defining Defaults
-
-```ruby
-
-class CitySearch < Searchlight::Search
-
-  #...
-
-  def initialize(options = {})
-    super
-    self.continent ||= 'Asia'
-  end
-
-  #...
-end
-
-CitySearch.new.results.to_sql
-  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Asia')"
-CitySearch.new(continent: 'Europe').results.to_sql
-  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Europe')"
-```
-
 ### Accessors
 
 For each search option, Searchlight defines two accessors: one for a value, and one for a boolean.
@@ -163,6 +141,28 @@ class PersonSearch < Searchlight::Search
   end
 
 end
+```
+
+### Defining Defaults
+
+```ruby
+
+class CitySearch < Searchlight::Search
+
+  #...
+
+  def initialize(options = {})
+    super
+    self.continent ||= 'Asia'
+  end
+
+  #...
+end
+
+CitySearch.new.results.to_sql
+  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Asia')"
+CitySearch.new(continent: 'Europe').results.to_sql
+  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Europe')"
 ```
 
 ### Subclassing
