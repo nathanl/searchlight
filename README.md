@@ -176,12 +176,11 @@ As long as your form submits options your search understands, you can easily hoo
 
 ```ruby
 # app/controllers/cities_controller.rb
-class CitiesController
-
-def search
-  @search = CitySearch.new(params[:search])
+class CitiesController < ApplicationController
+  def search
+    @search = CitySearch.new(params[:search])
+  end
 end
-...
 ```
 
 ## Adapters
