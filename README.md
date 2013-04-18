@@ -64,12 +64,6 @@ class CitySearch < Searchlight::Search
 
   searches :name, :continent, :country_name_like, :is_megacity
 
-  # This simple method is auto-defined by the ActiveRecord adapter; that's all it does.
-  # If you want something fancier, just define your own.
-  # def search_name
-  #   search.where(name: name)
-  # end
-
   # Reach into other tables
   def search_continent
     search.where('`countries`.`continent` = ?', continent)
@@ -210,9 +204,13 @@ end
 ```
 ## Adapters
 
-When you call `search_on` in your Searchlight class, Searchlight checks whether the search target comes from ActiveRecord, and, if so, extends your class with ActiveRecord behavior.
+Currently, Searchlight has adapters for ActiveRecord and ActionView. We'd love to get pull requests for others. :)
 
-This behavior is quite simple: it's just that when you declare, for example, `searches :name`, it automatically defines this method:
+### ActiveRecord
+
+When you call `search_on` in your Searchlight class, Searchlight checks whether the search target comes from ActiveRecord, and, if so, mixes a module into your class.
+
+For each of your search options, the module will have the simplest possible search method defined. For example, if your class `searches :name`, the module will have this method:
 
 ```ruby
   def search_name
@@ -220,9 +218,11 @@ This behavior is quite simple: it's just that when you declare, for example, `se
   end
 ```
 
-We'd love to get pull requests for other ORM adapters. :)
+Since that method is in a parent module, you can easily override it by defining your own method. You can also call `super` in the method you define.
 
-Similarly, Searchlight adds ActionView-friendly methods to your classes if it sees that `ActionView` is a defined constant.
+### ActionView
+
+Similarly, Searchlight adds ActionView-friendly methods to your classes if it sees that `ActionView` is a defined constant. See the code for details, but the upshot is that you can use a search with `form_for`.
 
 ## Compatibility
 
