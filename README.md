@@ -45,10 +45,10 @@ class PersonSearch < Searchlight::Search
   end
 
   # Another search method.
-  def search_first_name
+  def search_last_name
     # If this is the second search method called, `search` here will be
     # whatever `search_first_name` returned.
-    search.where(first_name: first_name)
+    search.where(last_name: last_name)
   end
 end
 ```
