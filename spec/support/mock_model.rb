@@ -8,8 +8,12 @@ end
 
 class MockActiveRecord < MockModel
 
+  def self.ancestors
+    super + [::ActiveRecord::Base]
+  end
+
   def self.is_a?(thing)
-    thing == ActiveRecord::Base ? true : super
+    thing == ::ActiveRecord::Base ? true : super
   end
 
 end
@@ -24,4 +28,10 @@ class MockRelation
   def method_missing(method, *args, &block)
     tap { called_methods << method }
   end
+
+  def is_a?(thing)
+    thing == ::ActiveRecord::Relation ? true : super
+  end
+
 end
+
