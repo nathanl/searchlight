@@ -152,7 +152,7 @@ class CitySearch < Searchlight::Search
   #...
 
   def initialize(options = {})
-    super
+    super    
     self.continent ||= 'Asia'
   end
 
@@ -163,6 +163,38 @@ CitySearch.new.results.to_sql
   => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Asia')"
 CitySearch.new(continent: 'Europe').results.to_sql
   => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Europe')"
+```
+
+You can define defaults for boolean attributes if you treat them as "yes/no/either" choices.
+
+```ruby
+class AnimalSearch < Searchlight::Search
+
+  search_on Animal
+  
+  searches :is_fictional
+  
+  def initialize(*args)
+    super
+    self.is_fictional = :either if is_fictional.blank?
+  end
+  
+  def search_is_fictional
+    case is_fictional.to_s
+    when 'true'   then search.where(fictional: true)
+    when 'false'  then search.where(fictional: false)
+    when 'either' then search # unmodified
+    end
+  end
+end
+
+
+AnimalSearch.new(fictional: true).results.to_sql
+  => "SELECT `animals`.* FROM `animals` WHERE (`fictional` = true)
+AnimalSearch.new(fictional: false).results.to_sql
+  => "SELECT `animals`.* FROM `animals` WHERE (`fictional` = false)
+AnimalSearch.new.results.to_sql
+  => "SELECT `animals`.* FROM `animals`
 ```
 
 ### Subclassing
