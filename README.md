@@ -218,9 +218,15 @@ SmallTownSearch.new(country_name_like: 'Norfolk').results.to_sql
   => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 1000) AND (`countries`.`name` LIKE '%Norfolk%')"
 ```
 
+### Dependent Options
+
+To allow search options that don't trigger searches directly, just use `attr_accessor`.
+
 ## Usage in Rails
 
-Searchlight plays nicely with Rails views.
+### Forms
+
+Searchlight plays nicely with Rails forms.
 
 ```ruby
 # app/views/cities/index.html.haml
@@ -244,6 +250,8 @@ Searchlight plays nicely with Rails views.
 
   = f.submit "Search"
 ```
+
+### Controllers
 
 As long as your form submits options your search understands, you can easily hook it up in your controller:
 
