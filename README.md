@@ -256,10 +256,18 @@ Searchlight plays nicely with Rails forms.
 As long as your form submits options your search understands, you can easily hook it up in your controller:
 
 ```ruby
-# app/controllers/cities_controller.rb
-class CitiesController < ApplicationController
-  def search
-    @search = CitySearch.new(params[:search])
+# app/controllers/orders_controller.rb
+class OrdersController < ApplicationController
+
+  def index
+    @orders = OrderSearch.new(search_params)
+  end
+  
+  protected
+  
+  def search_params
+    # Ensure the user can only browse or search their own orders
+    (params[:search]) || {}).merge(user_id: current_user.id)
   end
 end
 ```
