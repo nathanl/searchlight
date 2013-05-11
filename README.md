@@ -190,11 +190,11 @@ end
 
 
 AnimalSearch.new(fictional: true).results.to_sql
-  => "SELECT `animals`.* FROM `animals` WHERE (`fictional` = true)
+  => "SELECT `animals`.* FROM `animals` WHERE (`fictional` = true)"
 AnimalSearch.new(fictional: false).results.to_sql
-  => "SELECT `animals`.* FROM `animals` WHERE (`fictional` = false)
+  => "SELECT `animals`.* FROM `animals` WHERE (`fictional` = false)"
 AnimalSearch.new.results.to_sql
-  => "SELECT `animals`.* FROM `animals`
+  => "SELECT `animals`.* FROM `animals`"
 ```
 
 ### Subclassing
