@@ -2,7 +2,7 @@
 
 Searchlight helps you build searches from options via Ruby methods that you write.
 
-Searchlight can work with any ORM or object that allows chaining search methods. It comes with modules for integrating with ActiveRecord and ActionView, but can easily be used in any Ruby program.
+Searchlight can work with any ORM or object that can build a query using chained methods (eg, ActiveRecord's `.where(...).where(...).limit(...)`). It comes with modules for integrating with ActiveRecord and ActionView, but can easily be used in any Ruby program.
 
 [![Build Status](https://api.travis-ci.org/nathanl/searchlight.png?branch=master)](https://travis-ci.org/nathanl/searchlight)
 [![Code Climate](https://codeclimate.com/github/nathanl/searchlight.png)](https://codeclimate.com/github/nathanl/searchlight)
@@ -226,7 +226,7 @@ To allow search options that don't trigger searches directly, just use `attr_acc
 
 ### Forms
 
-Searchlight plays nicely with Rails forms.
+Searchlight plays nicely with Rails forms. All search options and any `attr_accessor`s you define can be hooked up to form fields.
 
 ```ruby
 # app/views/cities/index.html.haml
