@@ -11,7 +11,7 @@ module Searchlight
         raise MissingSearchTarget, "No search target provided via `search_on` and Searchlight can't guess one."
       end
     rescue NameError => e
-      if e.message.start_with?("uninitialized constant")
+      if /uninitialized constant/.match(e.message)
         raise MissingSearchTarget, "No search target provided; guessed target not found. Error: #{e.message}"
       end
       raise e # unknown error
