@@ -35,3 +35,7 @@ class MockRelation
 
 end
 
+module Namespaced
+  class Example
+  end
+end

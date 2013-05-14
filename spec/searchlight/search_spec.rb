@@ -29,7 +29,7 @@ describe Searchlight::Search do
 
   describe "search_on" do
 
-    context "when an explicit search target is provided" do
+    context "when an explicit search target was provided" do
 
       let(:search_target) { "Bobby Fischer" }
 
@@ -49,6 +49,42 @@ describe Searchlight::Search do
         klass = Class.new(SpiffyAccountSearch) { search_on Array }
         expect(klass.search_target).to be(Array)
         expect(SpiffyAccountSearch.search_target).to be(MockModel)
+      end
+
+    end
+
+    context "when no explicit search target was provided" do
+
+      let(:search_class) { Named::Class.new('Namespaced::ExampleSearch', described_class) }
+
+      it "guesses the search class based on its own namespaced class name" do
+        expect(search_class.search_target).to eq(Namespaced::Example)
+      end
+
+      context "when it can't make a guess as to the search class" do
+
+        let(:search_class) { Named::Class.new('Somekinda::Searchthingy', described_class) }
+
+        it "raises an exception" do
+          expect{search_class.search_target}.to raise_error(
+            Searchlight::Search::MissingSearchTarget, 
+            "No search target provided via `search_on` and Searchlight can't guess one."
+          )
+        end
+
+      end
+
+      context "when it tries to guess the search class but fails" do
+        
+        let(:search_class) { Named::Class.new('NonExistentObjectSearch', described_class) }
+
+        it "raises an exception" do
+          expect{search_class.search_target}.to raise_error(
+            Searchlight::Search::MissingSearchTarget, 
+            /No search target provided; guessed target not found.*uninitialized constant.*NonExistentObject/
+          )
+        end
+
       end
 
     end

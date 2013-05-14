@@ -3,7 +3,18 @@ module Searchlight
     extend DSL
 
     def self.search_target
-      defined?(@search_target) ? @search_target : superclass.search_target
+      return @search_target if defined?(@search_target)
+      return superclass.search_target if superclass.respond_to?(:search_target) && superclass != Searchlight::Search
+      if self.name.end_with?('Search')
+        @search_target = name.sub(/Search$/, '').split('::').inject(Kernel, &:const_get)
+      else
+        raise MissingSearchTarget, "No search target provided via `search_on` and Searchlight can't guess one."
+      end
+    rescue NameError => e
+      if e.message.start_with?("uninitialized constant")
+        raise MissingSearchTarget, "No search target provided; guessed target not found. Error: #{e.message}"
+      end
+      raise e # unknown error
     end
 
     def initialize(options = {})
@@ -63,6 +74,9 @@ module Searchlight
       def to_s
         message
       end
+    end
+
+    class MissingSearchTarget < StandardError
     end
 
   end
