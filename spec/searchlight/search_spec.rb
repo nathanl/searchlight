@@ -81,7 +81,7 @@ describe Searchlight::Search do
         it "raises an exception" do
           expect{search_class.search_target}.to raise_error(
             Searchlight::Search::MissingSearchTarget, 
-            /No search target provided; guessed target not found.*uninitialized constant.*NonExistentObject/
+            /No search target.*uninitialized constant.*NonExistentObject/
           )
         end
 
