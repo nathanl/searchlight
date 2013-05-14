@@ -29,24 +29,28 @@ describe Searchlight::Search do
 
   describe "search_on" do
 
-    let(:search_target) { "Bobby Fischer" }
+    context "when an explicit search target is provided" do
 
-    before :each do
-      search_class.search_on search_target
-    end
+      let(:search_target) { "Bobby Fischer" }
 
-    it "makes the object accessible via `search_target`" do
-      expect(search_class.search_target).to eq(search_target)
-    end
+      before :each do
+        search_class.search_on search_target
+      end
 
-    it "makes the search target available to its children" do
-      expect(SpiffyAccountSearch.search_target).to be(MockModel)
-    end
+      it "makes the object accessible via `search_target`" do
+        expect(search_class.search_target).to eq(search_target)
+      end
 
-    it "allows the children to set their own search target" do
-      klass = Class.new(SpiffyAccountSearch) { search_on Array }
-      expect(klass.search_target).to be(Array)
-      expect(SpiffyAccountSearch.search_target).to be(MockModel)
+      it "makes the search target available to its children" do
+        expect(SpiffyAccountSearch.search_target).to be(MockModel)
+      end
+
+      it "allows the children to set their own search target" do
+        klass = Class.new(SpiffyAccountSearch) { search_on Array }
+        expect(klass.search_target).to be(Array)
+        expect(SpiffyAccountSearch.search_target).to be(MockModel)
+      end
+
     end
 
   end
