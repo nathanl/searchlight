@@ -68,7 +68,7 @@ describe Searchlight::Search do
         it "raises an exception" do
           expect{search_class.search_target}.to raise_error(
             Searchlight::Search::MissingSearchTarget, 
-            "No search target provided via `search_on` and Searchlight can't guess one."
+            /No search target/
           )
         end
 
