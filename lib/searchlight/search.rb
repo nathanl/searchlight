@@ -64,8 +64,12 @@ module Searchlight
       (value.respond_to?(:empty?) && value.empty?) || value.nil? || value.to_s.strip == ''
     end
 
-    class UndefinedOption < StandardError
+    MissingSearchTarget = Class.new(Searchlight::Error)
+
+    class UndefinedOption < Searchlight::Error
+
       attr_accessor :message
+
       def initialize(option_name, search_class)
         option_name = option_name.to_s.sub(/=\Z/, '')
         self.message = "#{search_class} doesn't search '#{option_name}'."
@@ -78,9 +82,7 @@ module Searchlight
       def to_s
         message
       end
-    end
 
-    class MissingSearchTarget < StandardError
     end
 
   end
