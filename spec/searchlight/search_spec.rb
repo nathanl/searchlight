@@ -23,6 +23,16 @@ describe Searchlight::Search do
         expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus/)
       end
 
+      context "if the option starts with 'search_'" do
+
+        let(:options) { {search_genus: 'Mellivora'} }
+
+        it "suggests the option name the user may have meant to provide" do
+          expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus.*Did you just mean/)
+        end
+
+      end
+
     end
 
   end
