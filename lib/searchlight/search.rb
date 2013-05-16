@@ -5,7 +5,7 @@ module Searchlight
     def self.search_target
       return @search_target           if defined?(@search_target)
       return superclass.search_target if superclass.respond_to?(:search_target) && superclass != Searchlight::Search
-      guess_search_class
+      guess_search_class!
     end
 
     def initialize(options = {})
@@ -28,9 +28,9 @@ module Searchlight
 
     private
 
-    def self.guess_search_class
+    def self.guess_search_class!
       if self.name.end_with?('Search')
-        @search_target = name.sub(/Search$/, '').split('::').inject(Kernel, &:const_get)
+        @search_target = name.sub(/Search\z/, '').split('::').inject(Kernel, &:const_get)
       else
         raise MissingSearchTarget, "No search target provided via `search_on` and Searchlight can't guess one."
       end

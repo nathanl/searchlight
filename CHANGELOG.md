@@ -2,6 +2,13 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## Unreleased
+
+- If no search target is given, search class attempts to guess based on its own name
+- All errors that can be raise extend `Searchlight::Error`
+- Better testing
+- Still more documentation!
+
 ## v0.9.1
 
 Bugfix for ActiveRecord adapter

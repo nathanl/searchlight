@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Searchlight::Search do
 
   let(:search_class) { Named::Class.new('ExampleSearch', described_class) }
-  let(:options) { Hash.new }
-  let(:search) { search_class.new(options) }
+  let(:options)      { Hash.new }
+  let(:search)       { search_class.new(options) }
 
   describe "initializing" do
 
