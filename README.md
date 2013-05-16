@@ -145,6 +145,9 @@ end
 
 ### Defining Defaults
 
+Set defaults using plain Ruby. These can be used to prefill a form or to assume what the user didn't specify.
+
+
 ```ruby
 
 class CitySearch < Searchlight::Search
