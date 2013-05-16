@@ -2,7 +2,7 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
-## Unreleased
+## v1.0.0
 
 - If no search target is given, search class attempts to guess based on its own name
 - All errors that can be raise extend `Searchlight::Error`
