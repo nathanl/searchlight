@@ -14,7 +14,7 @@ The basic idea of Searchlight is to build a search by chaining method calls that
 For example, if you have a Searchlight search class called `YetiSearch`, and you instantiate it like this:
 
 ```ruby
-  yeti_search = YetiSearch.new(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:search]
+  search = YetiSearch.new(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:search]
 ```
 
 ... calling `results` on the instance will build a search by chaining calls to `search_active`, `search_name`, and `search_location`.
@@ -108,7 +108,7 @@ For each search option, Searchlight defines two accessors: one for a value, and 
 For example, if your class `searches :awesomeness` and gets instantiated like:
 
 ```ruby
-search = MySearchClass(awesomeness: 'Xtreme')
+search = MySearchClass.new(awesomeness: 'Xtreme')
 ```
 
 ... your search methods can use:
