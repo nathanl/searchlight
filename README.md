@@ -292,6 +292,8 @@ For each of your search options, the module will have the simplest possible sear
 
 Since that method is in a parent module, you can easily override it by defining your own method. You can also call `super` in the method you define.
 
+The adapter also ensures that searches return a relation, even if no options are given.
+
 ### ActionView
 
 Similarly, Searchlight adds ActionView-friendly methods to your classes if it sees that `ActionView` is a defined constant. See the code for details, but the upshot is that you can use a search with `form_for`.

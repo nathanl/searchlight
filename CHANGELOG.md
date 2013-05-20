@@ -2,6 +2,10 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## v1.1.0
+
+ActiveRecord adapter ensures that searches return a relation, even if no options are given
+
 ## v1.0.0
 
 - If no search target is given, search class attempts to guess based on its own name
