@@ -10,11 +10,11 @@ describe 'Searchlight::Adapters::ActiveRecord', adapter: true do
   let(:search_class)    { Named::Class.new('SearchClass', Searchlight::Search).tap { |klass| klass.search_on target } }
   let(:search_instance) { search_class.new(elephants: 'yes, please') }
 
-  before :each do
-    search_class.searches :elephants
-  end
-
   shared_examples "search classes with an ActiveRecord target" do
+
+    before :each do
+      search_class.searches :elephants
+    end
 
     it "adds search methods to the search class" do
       expect(search_class.new).to respond_to(:search_elephants)
