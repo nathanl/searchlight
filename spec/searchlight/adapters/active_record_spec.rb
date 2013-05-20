@@ -44,7 +44,7 @@ describe 'Searchlight::Adapters::ActiveRecord', adapter: true do
 
   end
 
-  context "when the search target is an ActiveRecord class" do
+  context "when the search target is an ActiveRecord relation" do
 
     let(:target)   { MockActiveRecord.joins(:dudes_named_milford).tap { |r| r.called_methods.clear } }
 
