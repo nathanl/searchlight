@@ -5,6 +5,7 @@ module Searchlight
       def search_on(target)
         super
         extend Search       if is_active_record?(target)
+        convert_to_relation if is_active_record_class?(target)
       end
 
       module Search
@@ -41,6 +42,15 @@ module Searchlight
 
       def is_active_record_relation?(target)
         target.is_a?(::ActiveRecord::Relation)
+      end
+
+      # Ensure that searches without options still return enumerable results
+      def convert_to_relation
+        self.search_target = (active_record_version >= 4) ? search_target.all : search_target.scoped
+      end
+
+      def active_record_version
+        ::ActiveRecord::VERSION::MAJOR.to_i
       end
 
     end

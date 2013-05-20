@@ -41,6 +41,10 @@ module Searchlight
       raise e
     end
 
+    def self.search_target=(value)
+      @search_target = value
+    end
+
     def search_methods
       public_methods.map(&:to_s).select { |m| m.start_with?('search_') }
     end

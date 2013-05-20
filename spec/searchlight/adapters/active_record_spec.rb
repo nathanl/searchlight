@@ -7,7 +7,13 @@ describe 'Searchlight::Adapters::ActiveRecord', adapter: true do
     require 'active_record'
   end
 
-  let(:search_class)    { Named::Class.new('SearchClass', Searchlight::Search).tap { |klass| klass.search_on target } }
+  let(:search_class)    {
+    Named::Class.new('SearchClass', Searchlight::Search).tap { |klass|
+      klass.instance_eval(&ar_version_faker)
+      klass.search_on target
+    }
+  }
+  let(:ar_version_faker) { lambda {|klass| nil } } # no-op
   let(:search_instance) { search_class.new(elephants: 'yes, please') }
 
   shared_examples "search classes with an ActiveRecord target" do
@@ -26,7 +32,7 @@ describe 'Searchlight::Adapters::ActiveRecord', adapter: true do
 
     it "defines search methods that call where on the search target" do
       search_instance.results
-      expect(search_instance.search.called_methods).to eq([:where])
+      expect(search_instance.search.called_methods).to include(:where)
     end
 
     it "sets arguments properly in the defined method" do
@@ -39,6 +45,32 @@ describe 'Searchlight::Adapters::ActiveRecord', adapter: true do
   context "when the search target is an ActiveRecord class" do
 
     let(:target)   { MockActiveRecord }
+
+    describe "converting to an ActiveRecord::Relation" do
+
+      context "for ActiveRecord <= 3" do
+
+        let(:ar_version_faker) { lambda { |klass| klass.stub(:active_record_version).and_return(3) } }
+
+        it "calls 'scoped'" do
+          target.should_receive(:scoped)
+          search_class
+        end
+
+      end
+
+      context "for ActiveRecord >= 4" do
+
+        let(:ar_version_faker) { lambda { |klass| klass.stub(:active_record_version).and_return(4) } }
+
+        it "calls 'all'" do
+          target.should_receive(:all)
+          search_class
+        end
+
+      end
+
+    end
 
     it_behaves_like "search classes with an ActiveRecord target"
 
