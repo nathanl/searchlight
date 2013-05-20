@@ -4,10 +4,7 @@ module Searchlight
 
       def search_on(target)
         super
-        if target.is_a?(Class) && target.ancestors.include?(::ActiveRecord::Base) ||
-          target.is_a?(::ActiveRecord::Relation)
-          extend Search
-        end
+        extend Search       if is_active_record?(target)
       end
 
       module Search
@@ -30,6 +27,20 @@ module Searchlight
 
           @ar_searches_module.module_eval(eval_string, __FILE__, __LINE__)
         end
+      end
+
+      protected
+
+      def is_active_record?(target)
+         is_active_record_class?(target) || is_active_record_relation?(target)
+      end
+
+      def is_active_record_class?(target)
+        target.is_a?(Class) && target.ancestors.include?(::ActiveRecord::Base)
+      end
+
+      def is_active_record_relation?(target)
+        target.is_a?(::ActiveRecord::Relation)
       end
 
     end
