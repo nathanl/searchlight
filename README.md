@@ -252,6 +252,9 @@ Searchlight plays nicely with Rails forms. All search options and any `attr_acce
     = f.select :continent, ['Africa', 'Asia', 'Europe'], include_blank: true
 
   = f.submit "Search"
+  
+- @results.each do |city|
+  = render 'city'
 ```
 
 ### Controllers
@@ -263,7 +266,8 @@ As long as your form submits options your search understands, you can easily hoo
 class OrdersController < ApplicationController
 
   def index
-    @orders = OrderSearch.new(search_params)
+    @search  = OrderSearch.new(search_params) # For use in a form
+    @results = @search.results                # For display along with form
   end
   
   protected
