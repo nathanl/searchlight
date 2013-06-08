@@ -2,22 +2,28 @@ require 'spec_helper'
 
 describe Searchlight::Search do
 
-  let(:search_class) { Named::Class.new('ExampleSearch', described_class) }
-  let(:options)      { Hash.new }
-  let(:search)       { search_class.new(options) }
+  let(:search_class)     { Named::Class.new('ExampleSearch', described_class).tap { |c| c.searches *allowed_options } }
+  let(:allowed_options)  { Hash.new }
+  let(:provided_options) { Hash.new }
+  let(:search)           { search_class.new(provided_options) }
 
   describe "initializing" do
 
-    let(:options) { {beak_color: 'mauve'} }
+    describe "mass-assigning provided options" do
 
-    it "mass-assigns provided options" do
-      search_class.searches :beak_color
-      expect(search.beak_color).to eq('mauve')
+      let(:allowed_options)  { [:beak_color] }
+      let(:provided_options) { {beak_color: 'mauve'} }
+
+      it "mass-assigns provided options" do
+        search_class.searches :beak_color
+        expect(search.beak_color).to eq('mauve')
+      end
+
     end
 
     describe "handling invalid options" do
 
-      let(:options) { {genus: 'Mellivora'} }
+      let(:provided_options) { {genus: 'Mellivora'} }
 
       it "raises an error explaining that this search class doesn't search the given property" do
         expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus/)
@@ -25,7 +31,7 @@ describe Searchlight::Search do
 
       context "if the option starts with 'search_'" do
 
-        let(:options) { {search_genus: 'Mellivora'} }
+        let(:provided_options) { {search_genus: 'Mellivora'} }
 
         it "suggests the option name the user may have meant to provide" do
           expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus.*Did you just mean/)
@@ -154,7 +160,7 @@ describe Searchlight::Search do
 
     describe "accessing search options as booleans" do
 
-      let(:options) { {fishies: fishies} }
+      let(:provided_options) { {fishies: fishies} }
 
       before :each do
         search_class.searches :fishies
