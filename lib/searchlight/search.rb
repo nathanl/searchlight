@@ -2,6 +2,8 @@ module Searchlight
   class Search
     extend DSL
 
+    attr_accessor :options
+
     def self.search_target
       return @search_target           if defined?(@search_target)
       return superclass.search_target if superclass.respond_to?(:search_target) && superclass != Searchlight::Search
@@ -9,6 +11,7 @@ module Searchlight
     end
 
     def initialize(options = {})
+      self.options = options.reject {|k, v| blank_value?(v) }
       options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
     rescue NoMethodError => e
       raise UndefinedOption.new(e.name, self.class.name)

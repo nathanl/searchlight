@@ -21,6 +21,34 @@ describe Searchlight::Search do
 
     end
 
+    describe "screening options" do
+
+      let(:allowed_options) { [:name, :description, :categories, :nicknames] }
+
+      context "when non-empty options are provided" do
+
+        let(:provided_options) { {name: 'Roy', description: 'Ornry', categories: %w[mammal moonshiner], nicknames: %w[Slim Bubba]} }
+
+        it "adds them to the options accessor" do
+          expect(search.options).to eq(provided_options)
+        end
+
+      end
+
+      context "when some provided options are empty" do
+
+        let(:provided_options) { {name: 'Roy', description: '', categories: %w[mammal moonshiner], nicknames: []} }
+
+        it "does not add them to the options accessor" do
+          expect(search.options).to eq(name: 'Roy', categories: %w[mammal moonshiner])
+
+        end
+
+      end
+
+
+    end
+
     describe "handling invalid options" do
 
       let(:provided_options) { {genus: 'Mellivora'} }
