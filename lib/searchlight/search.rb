@@ -48,10 +48,6 @@ module Searchlight
       @search_target = value
     end
 
-    def search_methods
-      public_methods.map(&:to_s).select { |m| m.start_with?('search_') }
-    end
-
     def run
       options.each do |option_name, value|
         new_search  = public_send("search_#{option_name}") if respond_to?("search_#{option_name}")

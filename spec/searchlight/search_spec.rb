@@ -134,27 +134,6 @@ describe Searchlight::Search do
 
   end
 
-  describe "search_methods" do
-
-    let(:search_class) {
-      Named::Class.new('ExampleSearch', described_class) do
-        def search_bees
-        end
-
-        def search_bats
-        end
-
-        def search_bees
-        end
-      end
-    }
-
-    it "keeps a unique list of the search methods" do
-      expect(search.send(:search_methods).map(&:to_s).sort).to eq(['search_bats', 'search_bees'])
-    end
-
-  end
-
   describe "search options" do
 
     describe "accessors" do
