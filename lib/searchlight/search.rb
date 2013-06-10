@@ -14,7 +14,7 @@ module Searchlight
       self.options = provided_options.reject {|k, v| blank_value?(v) }
       options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
     rescue NoMethodError => e
-      raise UndefinedOption.new(e.name, self.class.name)
+      raise UndefinedOption.new(e.name, self)
     end
 
     def search
@@ -67,12 +67,13 @@ module Searchlight
 
       attr_accessor :message
 
-      def initialize(option_name, search_class)
+      def initialize(option_name, search)
         option_name = option_name.to_s.sub(/=\Z/, '')
-        self.message = "#{search_class} doesn't search '#{option_name}' or have an accessor for that property."
+        self.message = "#{search.class.name} doesn't search '#{option_name}' or have an accessor for that property."
         if option_name.start_with?('search_')
+          method_maybe_intended = option_name.sub(/\Asearch_/, '')
           # Gee golly, I'm so helpful!
-          self.message << " Did you just mean '#{option_name.sub(/\Asearch_/, '')}'?"
+          self.message << " Did you just mean '#{method_maybe_intended}'?" if search.respond_to?("#{method_maybe_intended}=")
         end
       end
 
