@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Searchlight::Search do
 
-  let(:search_class)     { Named::Class.new('ExampleSearch', described_class).tap { |c| c.searches *allowed_options } }
+  let(:search_class)     { Named::Class.new('ExampleSearch', described_class).tap { |klass| klass.searches *allowed_options } }
   let(:allowed_options)  { Hash.new }
   let(:provided_options) { Hash.new }
   let(:search)           { search_class.new(provided_options) }
@@ -45,7 +45,6 @@ describe Searchlight::Search do
         end
 
       end
-
 
     end
 
@@ -236,9 +235,12 @@ describe Searchlight::Search do
 
   describe "results" do
 
-    let(:search) { AccountSearch.new(paid_amount: 50, business_name: "Rod's Meat Shack") }
+    let(:search) { AccountSearch.new(paid_amount: 50, business_name: "Rod's Meat Shack", other_attribute: 'whatevs') }
 
-    it "builds a search by calling all of the methods that had values to search" do
+    it "builds a search by calling each search method that corresponds to a provided option" do
+      search.should_receive(:search_paid_amount).and_call_original
+      search.should_receive(:search_business_name).and_call_original
+      # Can't do `.should_not_receive(:search_other_attribute)` because the expectation defines a method which would get called.
       search.results
       expect(search.search.called_methods).to eq(2.times.map { :where })
     end

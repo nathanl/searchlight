@@ -10,8 +10,8 @@ module Searchlight
       guess_search_class!
     end
 
-    def initialize(options = {})
-      self.options = options.reject {|k, v| blank_value?(v) }
+    def initialize(provided_options = {})
+      self.options = provided_options.reject {|k, v| blank_value?(v) }
       options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
     rescue NoMethodError => e
       raise UndefinedOption.new(e.name, self.class.name)
@@ -53,17 +53,11 @@ module Searchlight
     end
 
     def run
-      search_methods.each do |method|
-        new_search  = run_search_method(method)
+      options.each do |option_name, value|
+        new_search  = public_send("search_#{option_name}") if respond_to?("search_#{option_name}")
         self.search = new_search unless new_search.nil?
       end
       search
-    end
-
-    def run_search_method(method_name)
-      option_value = instance_variable_get("@#{method_name.sub(/\Asearch_/, '')}")
-      option_value = option_value.reject { |item| blank_value?(item) } if option_value.respond_to?(:reject)
-      public_send(method_name) unless blank_value?(option_value)
     end
 
     # Note that false is not blank
@@ -79,7 +73,7 @@ module Searchlight
 
       def initialize(option_name, search_class)
         option_name = option_name.to_s.sub(/=\Z/, '')
-        self.message = "#{search_class} doesn't search '#{option_name}'."
+        self.message = "#{search_class} doesn't search '#{option_name}' or have an accessor for that property."
         if option_name.start_with?('search_')
           # Gee golly, I'm so helpful!
           self.message << " Did you just mean '#{option_name.sub(/\Asearch_/, '')}'?"
