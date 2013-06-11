@@ -2,6 +2,10 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## v1.2.2
+
+Gracefully handle being given explicit `nil` in initialization instead of options hash or empty arguments
+
 ## v1.2.1
 
 Bugfix for v1.2.0 - screen out from options any collections containing only blank values
