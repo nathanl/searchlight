@@ -45,6 +45,26 @@ describe Searchlight::Search do
 
       end
 
+      context "when an empty options hash is given" do
+
+        let(:provided_options) { {} }
+
+        it "has empty options" do
+          expect(search.options).to eq({})
+        end
+
+      end
+
+      context "when the options are explicitly nil" do
+
+        let(:provided_options) { nil }
+
+        it "has empty options" do
+          expect(search.options).to eq({})
+        end
+
+      end
+
     end
 
     describe "handling invalid options" do

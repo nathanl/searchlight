@@ -45,7 +45,8 @@ module Searchlight
       @search_target = value
     end
 
-    def filter_and_mass_assign(provided_options)
+    def filter_and_mass_assign(provided_options = {})
+      provided_options = {} if provided_options.nil?
       self.options = provided_options.reject { |key, value| is_blank?(value) }
       begin
         options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
