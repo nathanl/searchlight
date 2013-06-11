@@ -10,9 +10,8 @@ module Searchlight
       guess_search_class!
     end
 
-    def initialize(provided_options = {})
-      self.options = provided_options.reject {|k, v| blank_value?(v) }
-      options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
+    def initialize(options = {})
+      filter_and_mass_assign(options)
     rescue NoMethodError => e
       raise UndefinedOption.new(e.name, self)
     end
@@ -48,6 +47,11 @@ module Searchlight
       @search_target = value
     end
 
+    def filter_and_mass_assign(provided_options)
+      self.options = provided_options.reject { |key, value| is_blank?(value) }
+      options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
+    end
+
     def run
       options.each do |option_name, value|
         new_search  = public_send("search_#{option_name}") if respond_to?("search_#{option_name}")
@@ -57,7 +61,7 @@ module Searchlight
     end
 
     # Note that false is not blank
-    def blank_value?(value)
+    def is_blank?(value)
       (value.respond_to?(:empty?) && value.empty?) || value.nil? || value.to_s.strip == ''
     end
 
