@@ -2,6 +2,10 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## Unreleased
+
+Provide `options` accessor that returns all options considered non-blank.
+
 ## v1.1.0
 
 ActiveRecord adapter ensures that searches return a relation, even if no options are given
