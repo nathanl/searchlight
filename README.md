@@ -4,8 +4,10 @@ Searchlight helps you build searches from options via Ruby methods that you writ
 
 Searchlight can work with any ORM or object that can build a query using chained methods (eg, ActiveRecord's `.where(...).where(...).limit(...)`). It comes with modules for integrating with ActiveRecord and ActionView, but can easily be used in any Ruby program.
 
-[![Build Status](https://api.travis-ci.org/nathanl/searchlight.png?branch=master)](https://travis-ci.org/nathanl/searchlight)
+[![Gem Version](https://badge.fury.io/rb/searchlight.png)](https://rubygems.org/gems/searchlight)
 [![Code Climate](https://codeclimate.com/github/nathanl/searchlight.png)](https://codeclimate.com/github/nathanl/searchlight)
+[![Build Status](https://api.travis-ci.org/nathanl/searchlight.png?branch=master)](https://travis-ci.org/nathanl/searchlight)
+[![Dependency Status](https://gemnasium.com/nathanl/searchlight.png)](https://gemnasium.com/nathanl/searchlight)
 
 ## Overview
 

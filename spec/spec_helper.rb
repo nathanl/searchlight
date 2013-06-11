@@ -1,6 +1,8 @@
 require 'capybara/rspec'
 require 'simplecov'
 SimpleCov.start
+require 'coveralls'
+Coveralls.wear!
 require 'searchlight'
 $LOAD_PATH << '.'
 require 'support/mock_model'
