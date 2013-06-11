@@ -4,7 +4,8 @@ Searchlight does its best to use [semantic versioning](http://semver.org).
 
 ## Unreleased
 
-Provide `options` accessor that returns all options considered non-blank.
+- Provide `options` accessor that returns all options considered non-blank
+- Slightly nicer errors when passing invalid options
 
 ## v1.1.0
 
