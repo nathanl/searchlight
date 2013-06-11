@@ -103,7 +103,7 @@ end
 
 ### Accessors
 
-For each search option, Searchlight defines two accessors: one for a value, and one for a boolean.
+For each search option you allow, Searchlight defines two accessors: one for a value, and one for a boolean.
 
 For example, if your class `searches :awesomeness` and gets instantiated like:
 
@@ -143,10 +143,11 @@ class PersonSearch < Searchlight::Search
 end
 ```
 
+Additionally, each search instance has an `options` accessor, which will have all the usable options with which it was instantiated. This excludes empty collections, blank strings, `nil`, etc. These usable options will be used in determining which search methods to run.
+
 ### Defining Defaults
 
 Set defaults using plain Ruby. These can be used to prefill a form or to assume what the user didn't specify.
-
 
 ```ruby
 

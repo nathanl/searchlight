@@ -3,6 +3,8 @@
 .bundle
 .config
 .rvmrc
+.ruby-version
+.ruby-gemset
 .yardoc
 Gemfile.lock
 InstalledFiles
