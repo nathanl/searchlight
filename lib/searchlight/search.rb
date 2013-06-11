@@ -12,8 +12,6 @@ module Searchlight
 
     def initialize(options = {})
       filter_and_mass_assign(options)
-    rescue NoMethodError => e
-      raise UndefinedOption.new(e.name, self)
     end
 
     def search
@@ -49,7 +47,11 @@ module Searchlight
 
     def filter_and_mass_assign(provided_options)
       self.options = provided_options.reject { |key, value| is_blank?(value) }
-      options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
+      begin
+        options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
+      rescue NoMethodError => e
+        raise UndefinedOption.new(e.name, self)
+      end
     end
 
     def run
