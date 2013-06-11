@@ -2,33 +2,86 @@ require 'spec_helper'
 
 describe Searchlight::Search do
 
-  let(:search_class) { Named::Class.new('ExampleSearch', described_class) }
-  let(:options)      { Hash.new }
-  let(:search)       { search_class.new(options) }
+  let(:search_class)     { Named::Class.new('ExampleSearch', described_class).tap { |klass| klass.searches *allowed_options } }
+  let(:allowed_options)  { Hash.new }
+  let(:provided_options) { Hash.new }
+  let(:search)           { search_class.new(provided_options) }
 
   describe "initializing" do
 
-    let(:options) { {beak_color: 'mauve'} }
+    describe "mass-assigning provided options" do
 
-    it "mass-assigns provided options" do
-      search_class.searches :beak_color
-      expect(search.beak_color).to eq('mauve')
+      let(:allowed_options)  { [:beak_color] }
+      let(:provided_options) { {beak_color: 'mauve'} }
+
+      it "mass-assigns provided options" do
+        search_class.searches :beak_color
+        expect(search.beak_color).to eq('mauve')
+      end
+
+    end
+
+    describe "screening options" do
+
+      let(:allowed_options) { [:name, :description, :categories, :nicknames] }
+
+      context "when non-empty options are provided" do
+
+        let(:provided_options) { {name: 'Roy', description: 'Ornry', categories: %w[mammal moonshiner], nicknames: %w[Slim Bubba]} }
+
+        it "adds them to the options accessor" do
+          expect(search.options).to eq(provided_options)
+        end
+
+      end
+
+      context "when some provided options are empty" do
+
+        let(:provided_options) { {name: 'Roy', description: '', categories: %w[mammal moonshiner], nicknames: []} }
+
+        it "does not add them to the options accessor" do
+          expect(search.options).to eq(name: 'Roy', categories: %w[mammal moonshiner])
+
+        end
+
+      end
+
     end
 
     describe "handling invalid options" do
 
-      let(:options) { {genus: 'Mellivora'} }
+      let(:provided_options) { {genus: 'Mellivora'} }
 
       it "raises an error explaining that this search class doesn't search the given property" do
         expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus/)
       end
 
-      context "if the option starts with 'search_'" do
+      context "if the provided option starts with 'search_'" do
 
-        let(:options) { {search_genus: 'Mellivora'} }
+        let(:allowed_options)  { [:genus] }
 
-        it "suggests the option name the user may have meant to provide" do
-          expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus.*Did you just mean/)
+        context "and it looks like a valid search option" do
+
+          let(:provided_options) { {search_genus: 'Mellivora'} }
+
+          it "suggests the option name the user may have meant to provide" do
+            expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus.*Did you just mean/)
+          end
+
+        end
+
+        context "but doesn't look like a valid search option" do
+
+          let(:provided_options) { {search_girth: 'Wee'} }
+
+          it "doesn't suggest an option name" do
+            begin
+              search
+            rescue Searchlight::Search::UndefinedOption => exception
+              expect(exception.message.match(/Did you just mean/)).to be_nil
+            end
+          end
+
         end
 
       end
@@ -101,27 +154,6 @@ describe Searchlight::Search do
 
   end
 
-  describe "search_methods" do
-
-    let(:search_class) {
-      Named::Class.new('ExampleSearch', described_class) do
-        def search_bees
-        end
-
-        def search_bats
-        end
-
-        def search_bees
-        end
-      end
-    }
-
-    it "keeps a unique list of the search methods" do
-      expect(search.send(:search_methods).map(&:to_s).sort).to eq(['search_bats', 'search_bees'])
-    end
-
-  end
-
   describe "search options" do
 
     describe "accessors" do
@@ -154,7 +186,7 @@ describe Searchlight::Search do
 
     describe "accessing search options as booleans" do
 
-      let(:options) { {fishies: fishies} }
+      let(:provided_options) { {fishies: fishies} }
 
       before :each do
         search_class.searches :fishies
@@ -202,9 +234,12 @@ describe Searchlight::Search do
 
   describe "results" do
 
-    let(:search) { AccountSearch.new(paid_amount: 50, business_name: "Rod's Meat Shack") }
+    let(:search) { AccountSearch.new(paid_amount: 50, business_name: "Rod's Meat Shack", other_attribute: 'whatevs') }
 
-    it "builds a search by calling all of the methods that had values to search" do
+    it "builds a search by calling each search method that corresponds to a provided option" do
+      search.should_receive(:search_paid_amount).and_call_original
+      search.should_receive(:search_business_name).and_call_original
+      # Can't do `.should_not_receive(:search_other_attribute)` because the expectation defines a method which would get called.
       search.results
       expect(search.search.called_methods).to eq(2.times.map { :where })
     end

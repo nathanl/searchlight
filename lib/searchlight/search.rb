@@ -2,6 +2,8 @@ module Searchlight
   class Search
     extend DSL
 
+    attr_accessor :options
+
     def self.search_target
       return @search_target           if defined?(@search_target)
       return superclass.search_target if superclass.respond_to?(:search_target) && superclass != Searchlight::Search
@@ -9,9 +11,7 @@ module Searchlight
     end
 
     def initialize(options = {})
-      options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
-    rescue NoMethodError => e
-      raise UndefinedOption.new(e.name, self.class.name)
+      filter_and_mass_assign(options)
     end
 
     def search
@@ -45,26 +45,25 @@ module Searchlight
       @search_target = value
     end
 
-    def search_methods
-      public_methods.map(&:to_s).select { |m| m.start_with?('search_') }
+    def filter_and_mass_assign(provided_options)
+      self.options = provided_options.reject { |key, value| is_blank?(value) }
+      begin
+        options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
+      rescue NoMethodError => e
+        raise UndefinedOption.new(e.name, self)
+      end
     end
 
     def run
-      search_methods.each do |method|
-        new_search  = run_search_method(method)
+      options.each do |option_name, value|
+        new_search  = public_send("search_#{option_name}") if respond_to?("search_#{option_name}")
         self.search = new_search unless new_search.nil?
       end
       search
     end
 
-    def run_search_method(method_name)
-      option_value = instance_variable_get("@#{method_name.sub(/\Asearch_/, '')}")
-      option_value = option_value.reject { |item| blank_value?(item) } if option_value.respond_to?(:reject)
-      public_send(method_name) unless blank_value?(option_value)
-    end
-
     # Note that false is not blank
-    def blank_value?(value)
+    def is_blank?(value)
       (value.respond_to?(:empty?) && value.empty?) || value.nil? || value.to_s.strip == ''
     end
 
@@ -74,12 +73,13 @@ module Searchlight
 
       attr_accessor :message
 
-      def initialize(option_name, search_class)
+      def initialize(option_name, search)
         option_name = option_name.to_s.sub(/=\Z/, '')
-        self.message = "#{search_class} doesn't search '#{option_name}'."
+        self.message = "#{search.class.name} doesn't search '#{option_name}' or have an accessor for that property."
         if option_name.start_with?('search_')
+          method_maybe_intended = option_name.sub(/\Asearch_/, '')
           # Gee golly, I'm so helpful!
-          self.message << " Did you just mean '#{option_name.sub(/\Asearch_/, '')}'?"
+          self.message << " Did you just mean '#{method_maybe_intended}'?" if search.respond_to?("#{method_maybe_intended}=")
         end
       end
 
