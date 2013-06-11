@@ -25,7 +25,7 @@ describe Searchlight::Search do
 
       let(:allowed_options) { [:name, :description, :categories, :nicknames] }
 
-      context "when non-empty options are provided" do
+      context "when all options are usable" do
 
         let(:provided_options) { {name: 'Roy', description: 'Ornry', categories: %w[mammal moonshiner], nicknames: %w[Slim Bubba]} }
 
@@ -37,11 +37,10 @@ describe Searchlight::Search do
 
       context "when some provided options are empty" do
 
-        let(:provided_options) { {name: 'Roy', description: '', categories: %w[mammal moonshiner], nicknames: []} }
+        let(:provided_options) { {name: 'Roy', description: '', categories: ['', ''], nicknames: []} }
 
         it "does not add them to the options accessor" do
-          expect(search.options).to eq(name: 'Roy', categories: %w[mammal moonshiner])
-
+          expect(search.options).to eq(name: 'Roy')
         end
 
       end

@@ -64,7 +64,10 @@ module Searchlight
 
     # Note that false is not blank
     def is_blank?(value)
-      (value.respond_to?(:empty?) && value.empty?) || value.nil? || value.to_s.strip == ''
+      return true if value.respond_to?(:all?) && value.all? { |v| is_blank?(v) }
+      return true if value.respond_to?(:empty?) && value.empty?
+      return true if value.nil? || value.to_s.strip == ''
+      false
     end
 
     MissingSearchTarget = Class.new(Searchlight::Error)

@@ -2,6 +2,10 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## v1.2.1
+
+Bugfix for v1.2.0 - screen out from options any collections containing only blank values
+
 ## v1.2.0
 
 - Provide `options` accessor that returns all options considered non-blank
