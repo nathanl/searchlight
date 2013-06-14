@@ -31,7 +31,7 @@ module Searchlight
               <<-MERMAID_TEARS
               def search_#{attribute_name}
                 raise Searchlight::Adapters::ActiveRecord::UndefinedColumn,
-                "Class `#{model_class}` has no column `#{attribute_name}`; please define `search_#{attribute_name}` on `\#{self}` to clarify what you intend to search for"
+                "Class `#{model_class}` has no column `#{attribute_name}`; please define `search_#{attribute_name}` on `\#{self.class}` to clarify what you intend to search for"
               end
               MERMAID_TEARS
             end
