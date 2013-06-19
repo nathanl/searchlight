@@ -13,12 +13,4 @@ class AccountSearch < Searchlight::Search
     search.where(business_name: business_name)
   end
 
-  def search_balance
-    search.where("owed - amount > ?", balance)
-  end
-
-  def search_active
-    search.where(active: active?)
-  end
-
 end
