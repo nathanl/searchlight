@@ -1,5 +1,6 @@
 # TODO
 
+- Only have `options` method return values that map to search methods; it doesn't track any `attr_accessor` you may have. This guarantees consistent contents.
 - Run rcov and mutant
 - Make nice Github page
 - Test with ActiveRecord 4
