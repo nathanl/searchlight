@@ -2,6 +2,10 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## Unreleased
+
+Fix bug introduced in v1.2: setting defaults in `initialize` did not add them to the options hash, which meant they weren't used in searches.
+
 ## v1.2.2
 
 Gracefully handle being given explicit `nil` in initialization instead of options hash or empty arguments
