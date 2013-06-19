@@ -1,7 +1,5 @@
 # TODO
 
-- Have `options` return the merge of `self.defaults` and the provided options
-- Add option method `non_defaults` shows how the provided options differ from defaults (new keys and different values)
 - Run rcov and mutant
 - Make nice Github page
 - Test with ActiveRecord 4

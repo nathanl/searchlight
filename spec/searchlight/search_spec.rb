@@ -63,49 +63,45 @@ describe Searchlight::Search do
 
       context "when the search class has defaults" do
 
-        context "when they're set during initialization" do
+        let(:allowed_options) { [:name, :age] }
+        let(:search_class) {
+          Named::Class.new('ExampleSearch', described_class) do
 
-          let(:allowed_options) { [:name, :age] }
-          let(:search_class) {
-            Named::Class.new('ExampleSearch', described_class) do
-
-              def initialize(options)
-                super
-                self.name ||= 'Dennis'
-                self.age  ||= 37
-              end
-
-            end.tap { |klass| klass.searches *allowed_options }
-          }
-
-          context "and there were no values given" do
-
-            let(:provided_options) { Hash.new }
-
-            it "uses the defaults for its accessors" do
-              expect(search.name).to eq('Dennis')
-              expect(search.age).to eq(37)
+            def initialize(options)
+              super
+              self.name ||= 'Dennis'
+              self.age  ||= 37
             end
 
-            it "uses the defaults for its options hash" do
-              expect(search.options).to eq({name: 'Dennis', age: 37})
-            end
+          end.tap { |klass| klass.searches *allowed_options }
+        }
 
+        context "and there were no values given" do
+
+          let(:provided_options) { Hash.new }
+
+          it "uses the defaults for its accessors" do
+            expect(search.name).to eq('Dennis')
+            expect(search.age).to eq(37)
           end
 
-          context "and values are given" do
+          it "uses the defaults for its options hash" do
+            expect(search.options).to eq({name: 'Dennis', age: 37})
+          end
 
-            let(:provided_options) { {name: 'Treebeard', age: 'A few thousand'} }
+        end
 
-            it "uses the provided values" do
-              expect(search.name).to eq('Treebeard')
-              expect(search.age).to eq('A few thousand')
-            end
+        context "and values are given" do
 
-            it "uses the provided values for its options hash" do
-              expect(search.options).to eq({name: 'Treebeard', age: 'A few thousand'})
-            end
+          let(:provided_options) { {name: 'Treebeard', age: 'A few thousand'} }
 
+          it "uses the provided values" do
+            expect(search.name).to eq('Treebeard')
+            expect(search.age).to eq('A few thousand')
+          end
+
+          it "uses the provided values for its options hash" do
+            expect(search.options).to eq({name: 'Treebeard', age: 'A few thousand'})
           end
 
         end
