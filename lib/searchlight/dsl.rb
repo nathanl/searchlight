@@ -19,9 +19,17 @@ module Searchlight
         include @accessors_module
       end
 
-      eval_string = "attr_accessor *#{attribute_names}\n"
-      eval_string << attribute_names.map { |attribute_name|
+      eval_string = attribute_names.map { |attribute_name|
         <<-LEPRECHAUN_JUICE
+          def #{attribute_name}=(val)
+            self.options ||= {}
+            self.options[:#{attribute_name}] = val
+          end
+
+          def #{attribute_name}
+            self.options[:#{attribute_name}]
+          end
+
           def #{attribute_name}?
             truthy?(public_send("#{attribute_name}"))
           end

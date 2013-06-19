@@ -7,72 +7,124 @@ describe Searchlight::Search do
   let(:provided_options) { Hash.new }
   let(:search)           { search_class.new(provided_options) }
 
-  describe "initializing" do
+  describe "options" do
 
-    describe "mass-assigning provided options" do
+    context "when given valid options" do
 
-      let(:allowed_options)  { [:beak_color] }
-      let(:provided_options) { {beak_color: 'mauve'} }
+      context "when the search class has no defaults" do
 
-      it "mass-assigns provided options" do
-        search_class.searches :beak_color
-        expect(search.beak_color).to eq('mauve')
+        describe "screening options" do
+
+          let(:allowed_options) { [:name, :description, :categories, :nicknames] }
+
+          context "when all options are usable" do
+
+            let(:provided_options) { {name: 'Roy', description: 'Ornry', categories: %w[mammal moonshiner], nicknames: %w[Slim Bubba]} }
+
+            it "adds them to the options accessor" do
+              expect(search.options).to eq(provided_options)
+            end
+
+          end
+
+          context "when some provided options are empty" do
+
+            let(:provided_options) { {name: 'Roy', description: '', categories: ['', ''], nicknames: []} }
+
+            it "does not add them to the options accessor" do
+              expect(search.options).to eq(name: 'Roy')
+            end
+
+          end
+
+          context "when an empty options hash is given" do
+
+            let(:provided_options) { {} }
+
+            it "has empty options" do
+              expect(search.options).to eq({})
+            end
+
+          end
+
+          context "when the options are explicitly nil" do
+
+            let(:provided_options) { nil }
+
+            it "has empty options" do
+              expect(search.options).to eq({})
+            end
+
+          end
+
+        end
+
+      end
+
+      context "when the search class has defaults" do
+
+        context "when they're set during initialization" do
+
+          let(:allowed_options) { [:name, :age] }
+          let(:search_class) {
+            Named::Class.new('ExampleSearch', described_class) do
+
+              def initialize(options)
+                super
+                self.name ||= 'Dennis'
+                self.age  ||= 37
+              end
+
+            end.tap { |klass| klass.searches *allowed_options }
+          }
+
+          context "and there were no values given" do
+
+            let(:provided_options) { Hash.new }
+
+            it "uses the defaults for its accessors" do
+              expect(search.name).to eq('Dennis')
+              expect(search.age).to eq(37)
+            end
+
+            it "uses the defaults for its options hash" do
+              expect(search.options).to eq({name: 'Dennis', age: 37})
+            end
+
+          end
+
+          context "and values are given" do
+
+            let(:provided_options) { {name: 'Treebeard', age: 'A few thousand'} }
+
+            it "uses the provided values" do
+              expect(search.name).to eq('Treebeard')
+              expect(search.age).to eq('A few thousand')
+            end
+
+            it "uses the provided values for its options hash" do
+              expect(search.options).to eq({name: 'Treebeard', age: 'A few thousand'})
+            end
+
+          end
+
+        end
+
       end
 
     end
 
-    describe "screening options" do
-
-      let(:allowed_options) { [:name, :description, :categories, :nicknames] }
-
-      context "when all options are usable" do
-
-        let(:provided_options) { {name: 'Roy', description: 'Ornry', categories: %w[mammal moonshiner], nicknames: %w[Slim Bubba]} }
-
-        it "adds them to the options accessor" do
-          expect(search.options).to eq(provided_options)
-        end
-
-      end
-
-      context "when some provided options are empty" do
-
-        let(:provided_options) { {name: 'Roy', description: '', categories: ['', ''], nicknames: []} }
-
-        it "does not add them to the options accessor" do
-          expect(search.options).to eq(name: 'Roy')
-        end
-
-      end
-
-      context "when an empty options hash is given" do
-
-        let(:provided_options) { {} }
-
-        it "has empty options" do
-          expect(search.options).to eq({})
-        end
-
-      end
-
-      context "when the options are explicitly nil" do
-
-        let(:provided_options) { nil }
-
-        it "has empty options" do
-          expect(search.options).to eq({})
-        end
-
-      end
-
-    end
-
-    describe "handling invalid options" do
+    context "when given invalid options" do
 
       let(:provided_options) { {genus: 'Mellivora'} }
 
       it "raises an error explaining that this search class doesn't search the given property" do
         expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus/)
+      end
+
+      it "gives the error a readable string representation" do
+        error   = Searchlight::Search::UndefinedOption.new(:badger_height, Array)
+        expect(error.to_s).to eq(error.message)
       end
 
       context "if the provided option starts with 'search_'" do
@@ -173,9 +225,9 @@ describe Searchlight::Search do
 
   end
 
-  describe "search options" do
+  describe "individual option accessors" do
 
-    describe "accessors" do
+    describe "the accessors module" do
 
       before :each do
         search_class.searches :foo
@@ -188,49 +240,54 @@ describe Searchlight::Search do
         expect(accessors_modules.length).to eq(1)
         expect(accessors_modules.first).to be_a(Named::Module)
       end
+    end
 
-      it "adds a getter" do
-        expect(search).to respond_to(:foo)
+    describe "value accessors" do
+
+      let(:allowed_options)  { [:beak_color] }
+      let(:provided_options) { {beak_color: 'mauve'} }
+
+      it "provides an getter for the value" do
+        search_class.searches :beak_color
+        expect(search.beak_color).to eq('mauve')
       end
 
-      it "adds a setter" do
-        expect(search).to respond_to(:foo=)
-      end
-
-      it "adds a boolean accessor" do
-        expect(search).to respond_to(:foo?)
+      it "provides an setter for the value" do
+        search_class.searches :beak_color
+        search.beak_color = 'turquoise'
+        expect(search.beak_color).to eq('turquoise')
       end
 
     end
 
-    describe "accessing search options as booleans" do
+    describe "boolean accessors" do
 
-      let(:provided_options) { {fishies: fishies} }
+      let(:provided_options) { {has_beak: has_beak} }
 
       before :each do
-        search_class.searches :fishies
+        search_class.searches :has_beak
       end
 
       {
-        0       => false,
-        '0'     => false,
-        ''      => false,
-        ' '     => false,
-        nil     => false,
-        'false' => false,
-        1       => true,
-        '1'     => true,
-        15      => true,
-        'true'  => true,
-        'pie'   => true
+        'yeppers' => true,
+        1         => true,
+        '1'       => true,
+        15        => true,
+        'true'    => true,
+        0         => false,
+        '0'       => false,
+        ''        => false,
+        ' '       => false,
+        nil       => false,
+        'false'   => false
       }.each do |input, output|
 
         describe input.inspect do
 
-          let(:fishies) { input }
+          let(:has_beak) { input }
 
           it "becomes boolean #{output}" do
-            expect(search.fishies?).to eq(output)
+            expect(search.has_beak?).to eq(output)
           end
 
         end
