@@ -65,7 +65,7 @@ module Searchlight
 
     def run
       options.each do |option_name, value|
-        new_search  = public_send("search_#{option_name}") if respond_to?("search_#{option_name}")
+        new_search  = public_send("search_#{option_name}")
         self.search = new_search unless new_search.nil?
       end
       search
