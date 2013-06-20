@@ -368,13 +368,13 @@ describe Searchlight::Search do
       end
     }
 
-    let(:search_instance) { search_class.new(bits: ' ', bats: nil, bots: false) }
+    let(:provided_options) { {bits: ' ', bats: nil, bots: false} }
 
     it "only runs search methods that have real values to search on" do
-      search_instance.should_not_receive(:search_bits)
-      search_instance.should_not_receive(:search_bats)
-      search_instance.should_receive(:search_bots)
-      search_instance.send(:run)
+      search.should_not_receive(:search_bits)
+      search.should_not_receive(:search_bats)
+      search.should_receive(:search_bots)
+      search.send(:run)
     end
 
   end
