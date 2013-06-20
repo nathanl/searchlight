@@ -33,6 +33,10 @@ class MockRelation
     thing == ::ActiveRecord::Relation ? true : super
   end
 
+  def engine
+    MockActiveRecord
+  end
+
 end
 
 module Namespaced
