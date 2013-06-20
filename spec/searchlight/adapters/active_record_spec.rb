@@ -18,22 +18,46 @@ describe 'Searchlight::Adapters::ActiveRecord', adapter: true do
 
   shared_examples "search classes with an ActiveRecord target" do
 
-    before :each do
-      search_class.searches :elephants
+    context "when the base model has a column matching the search term" do
+
+      before :each do
+        MockActiveRecord.stub(:columns_hash).and_return({'elephants' => 'column info...'})
+        search_class.searches :elephants
+      end
+
+      it "adds search methods to the search class" do
+        expect(search_class.new).to respond_to(:search_elephants)
+      end
+
+      it "defines search methods that call `where` on the search target" do
+        search_instance.results
+        expect(search_instance.search.called_methods).to include(:where)
+      end
+
+      it "sets arguments properly in the defined method" do
+        search_instance.search.should_receive(:where).with('elephants' => 'yes, please')
+        search_instance.search_elephants
+      end
+
     end
 
-    it "adds search methods to the search class" do
-      expect(search_class.new).to respond_to(:search_elephants)
-    end
+    context "when the base model has no column matching the search term" do
 
-    it "defines search methods that call where on the search target" do
-      search_instance.results
-      expect(search_instance.search.called_methods).to include(:where)
-    end
+      before :each do
+        MockActiveRecord.stub(:columns_hash).and_return({})
+        search_class.searches :elephants
+      end
 
-    it "sets arguments properly in the defined method" do
-      search_instance.search.should_receive(:where).with('elephants' => 'yes, please')
-      search_instance.search_elephants
+      it "adds search methods to the search class" do
+        expect(search_class.new).to respond_to(:search_elephants)
+      end
+
+      it "defines search methods to raise an exception" do
+        expect { search_instance.results }.to raise_error(
+          Searchlight::Adapters::ActiveRecord::UndefinedColumn
+        )
+      end
+
     end
 
   end
