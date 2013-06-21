@@ -21,12 +21,10 @@ module Searchlight
     end
 
     def options
-      search_methods.inject({}) { |hash, method_name|
-        opt_name = method_name.sub(/\Asearch_/, '')
-        hash[opt_name.to_sym] = send(opt_name)
-
-        hash
-      }.reject { |name, value| is_blank?(value) }
+      search_methods.reduce({}) { |hash, method_name|
+        option_name = method_name.sub(/\Asearch_/, '')
+        hash.tap { |hash| hash[option_name.to_sym] = send(option_name) }
+      }.reject { |option_name, value| is_blank?(value) }
     end
 
     protected
