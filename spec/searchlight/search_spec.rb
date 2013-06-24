@@ -2,7 +2,11 @@ require 'spec_helper'
 
 describe Searchlight::Search do
 
-  let(:search_class)     { Named::Class.new('ExampleSearch', described_class).tap { |klass| klass.searches *allowed_options } }
+  let(:search_class)     { Named::Class.new('ExampleSearch', described_class).tap {|klass|
+    klass.searches *allowed_options
+    allowed_options.each { |name| klass.send(:define_method, "search_#{name}") {} }
+    }
+  }
   let(:allowed_options)  { Hash.new }
   let(:provided_options) { Hash.new }
   let(:search)           { search_class.new(provided_options) }
@@ -57,6 +61,26 @@ describe Searchlight::Search do
 
           end
 
+          context "when some options are do not map to search methods (eg, attr_accessor)" do
+            let(:search_class) {
+              Named::Class.new('ExampleSearch', described_class) do
+                attr_accessor :krazy_mode
+                def search_name; end
+              end.tap { |klass| klass.searches *allowed_options }
+            }
+            let(:provided_options) { {name: 'Reese Roper', krazy_mode: true} }
+
+            it "sets all the provided values" do
+              expect(search.name).to       eq('Reese Roper')
+              expect(search.krazy_mode).to eq(true)
+            end
+
+            it "only lists options for the values corresponding to search methods" do
+              expect(search.options).to eq({name: 'Reese Roper'})
+            end
+
+          end
+
         end
 
       end
@@ -72,6 +96,9 @@ describe Searchlight::Search do
               self.name ||= 'Dennis'
               self.age  ||= 37
             end
+
+            def search_name; end
+            def search_age;  end
 
           end.tap { |klass| klass.searches *allowed_options }
         }
@@ -341,13 +368,13 @@ describe Searchlight::Search do
       end
     }
 
-    let(:search_instance) { search_class.new(bits: ' ', bats: nil, bots: false) }
+    let(:provided_options) { {bits: ' ', bats: nil, bots: false} }
 
     it "only runs search methods that have real values to search on" do
-      search_instance.should_not_receive(:search_bits)
-      search_instance.should_not_receive(:search_bats)
-      search_instance.should_receive(:search_bots)
-      search_instance.send(:run)
+      search.should_not_receive(:search_bits)
+      search.should_not_receive(:search_bats)
+      search.should_receive(:search_bots)
+      search.send(:run)
     end
 
   end

@@ -2,8 +2,6 @@ module Searchlight
   class Search
     extend DSL
 
-    attr_accessor :options
-
     def self.search_target
       return @search_target           if defined?(@search_target)
       return superclass.search_target if superclass.respond_to?(:search_target) && superclass != Searchlight::Search
@@ -22,11 +20,22 @@ module Searchlight
       @results ||= run
     end
 
+    def options
+      search_attributes.reduce({}) { |hash, option_name|
+        option_val = send(option_name)
+        hash.tap { |hash| hash[option_name.to_sym] = option_val unless is_blank?(option_val) }
+      }
+    end
+
     protected
 
     attr_writer :search
 
     private
+
+    def search_attributes
+      public_methods.map(&:to_s).select { |m| m.start_with?('search_') }.map { |m| m.sub(/\Asearch_/, '') }
+    end
 
     def self.guess_search_class!
       if self.name.end_with?('Search')
@@ -44,8 +53,7 @@ module Searchlight
     end
 
     def filter_and_mass_assign(provided_options = {})
-      provided_options = {} if provided_options.nil?
-      self.options = provided_options.reject { |key, value| is_blank?(value) }
+      options = (provided_options || {}).reject { |key, value| is_blank?(value) }
       begin
         options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
       rescue NoMethodError => e
@@ -55,7 +63,7 @@ module Searchlight
 
     def run
       options.each do |option_name, value|
-        new_search  = public_send("search_#{option_name}") if respond_to?("search_#{option_name}")
+        new_search  = public_send("search_#{option_name}")
         self.search = new_search unless new_search.nil?
       end
       search
