@@ -21,10 +21,10 @@ module Searchlight
     end
 
     def options
-      search_methods.reduce({}) { |hash, method_name|
-        option_name = method_name.sub(/\Asearch_/, '')
-        hash.tap { |hash| hash[option_name.to_sym] = send(option_name) }
-      }.reject { |option_name, value| is_blank?(value) }
+      search_attributes.reduce({}) { |hash, option_name|
+        option_val = send(option_name)
+        hash.tap { |hash| hash[option_name.to_sym] = option_val unless is_blank?(option_val) }
+      }
     end
 
     protected
@@ -33,8 +33,8 @@ module Searchlight
 
     private
 
-    def search_methods
-      public_methods.map(&:to_s).select { |m| m.start_with?('search_') }
+    def search_attributes
+      public_methods.map(&:to_s).select { |m| m.start_with?('search_') }.map { |m| m.sub(/\Asearch_/, '') }
     end
 
     def self.guess_search_class!
