@@ -2,7 +2,7 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
-## Unreleased
+## v1.2.4
 
 - `options` method only returns those that map to search methods (not `attr_accessor` type values)
 - Previously, `searches :name` in a class with an `ActiveRecord` target would always trigger the `ActiveRecord` adapter to define `searches_name` as `search.where(name: name)`. Now it first checks whether `name` is a column on the model, and if not, defines the method to raise an error.
