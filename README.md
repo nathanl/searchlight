@@ -10,6 +10,10 @@ Searchlight can work with any ORM or object that can build a query using chained
 [![Coverage Status](https://coveralls.io/repos/nathanl/searchlight/badge.png?branch=master)](https://coveralls.io/r/nathanl/searchlight?branch=master)
 [![Dependency Status](https://gemnasium.com/nathanl/searchlight.png)](https://gemnasium.com/nathanl/searchlight)
 
+## Getting Started
+
+An [introductory video](https://vimeo.com/69179161), [the demo app it uses](http://bookfinder-searchlight-demo.herokuapp.com) and [the code for that app](https://github.com/nathanl/bookfinder) are available to help you get started.
+
 ## Overview
 
 The basic idea of Searchlight is to build a search by chaining method calls that you define. It calls **public** methods on the object you specify, based on the options you pass.
