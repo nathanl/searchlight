@@ -2,13 +2,15 @@ require 'spec_helper'
 
 describe 'Searchlight::Adapters::ActionView', type: :feature, adapter: true do
 
+  let(:view)   { ::ActionView::Base.new }
+  let(:search) { AccountSearch.new(paid_amount: 15) }
+
   before :all do
     require 'searchlight/adapters/action_view'
     require 'action_view'
+    require 'active_model'
+    require 'active_support/core_ext'
   end
-
-  let(:view)   { ::ActionView::Base.new }
-  let(:search) { AccountSearch.new(paid_amount: 15) }
 
   before :each do
     view.stub(:protect_against_forgery?).and_return(false)
