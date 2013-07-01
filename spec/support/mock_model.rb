@@ -3,18 +3,6 @@ class MockModel
   def self.method_missing(method, *args, &block)
     MockRelation.new(method)
   end
-  
-end
-
-class MockActiveRecord < MockModel
-
-  def self.ancestors
-    super + [::ActiveRecord::Base]
-  end
-
-  def self.is_a?(thing)
-    thing == ::ActiveRecord::Base ? true : super
-  end
 
 end
 
