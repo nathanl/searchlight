@@ -288,13 +288,13 @@ end
 ```
 ## Adapters
 
-Currently, Searchlight has adapters for ActiveRecord and ActionView. We'd love to get pull requests for others. :)
+Currently, Searchlight has adapters for ActiveRecord, ActionView, and Mongoid. We'd love to get pull requests for others. :)
 
-### ActiveRecord
+### ActiveRecord and Mongoid
 
-When you call `search_on` in your Searchlight class, Searchlight checks whether the search target comes from ActiveRecord, and, if so, mixes a module into your class.
+When you call `search_on` in your Searchlight class, Searchlight checks whether the search target comes from ActiveRecord or Mongoid, and, if so, mixes a module into your class.
 
-For each of your search options, the module will have the simplest possible search method defined. For example, if your class `searches :name`, the module will have this method:
+For each of your search options, the module will have the simplest possible search method defined. For example, if your class `searches :name`, the ActiveRecord module will have this method:
 
 ```ruby
   def search_name
@@ -303,8 +303,6 @@ For each of your search options, the module will have the simplest possible sear
 ```
 
 Since that method is in a parent module, you can easily override it by defining your own method. You can also call `super` in the method you define.
-
-The adapter also ensures that searches return a relation, even if no options are given.
 
 ### ActionView
 

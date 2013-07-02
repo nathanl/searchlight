@@ -2,6 +2,10 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## v1.3.0
+
+New Mongoid adapter, thanks to [iliabylich](https://github.com/iliabylich).
+
 ## v1.2.4
 
 - `options` method only returns those that map to search methods (not `attr_accessor` type values)
