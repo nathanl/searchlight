@@ -14,6 +14,46 @@ Searchlight can work with any ORM or object that can build a query using chained
 
 An [introductory video](https://vimeo.com/69179161), [the demo app it uses](http://bookfinder-searchlight-demo.herokuapp.com) and [the code for that app](https://github.com/nathanl/bookfinder) are available to help you get started.
 
+## Generating the necessary files
+
+In console
+```ruby
+  rails generate searchlight MODEL
+```
+instead MODEL, you should paste model name, the fields to be searched. For example: i want to search in Client model
+
+```ruby
+  rails generate searchlight Client
+```
+It will generate for me app/searches/client_search.rb with
+```ruby
+  class ClientSearch < Searchlight::Search
+  #search_on Client
+
+  #Model attributes for which you want to search
+  #searches :gender, :city_id, :firstname
+
+  #Examples
+  #def search_gender
+  #  search.where(:gender => gender)
+  #end
+
+  #def search_city_id
+  #  search.where(city_id: city_id)
+  #end
+
+  #def search_firstname
+  #  search.where('firstname LIKE ?', )
+  #end
+end
+```
+For next work, uncommented nessesary lines
+
+This command also append autoload config in config/application.rb
+```ruby
+  config.autoload_paths += %W(#{config.root}/searches)
+```
+
 ## Overview
 
 The basic idea of Searchlight is to build a search by chaining method calls that you define. It calls **public** methods on the object you specify, based on the options you pass.
@@ -101,7 +141,7 @@ CitySearch.new(name: 'Nairobi').results.to_sql
 CitySearch.new(country_name_like: 'aust', continent: 'Europe').results.count # => 6
 
 non_megas = CitySearch.new(is_megacity: 'false')
-non_megas.results.to_sql 
+non_megas.results.to_sql
   # => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 100000"
 non_megas.results.each do |city|
   # ...
@@ -163,7 +203,7 @@ class CitySearch < Searchlight::Search
   #...
 
   def initialize(options = {})
-    super    
+    super
     self.continent ||= 'Asia'
   end
 
@@ -182,14 +222,14 @@ You can define defaults for boolean attributes if you treat them as "yes/no/eith
 class AnimalSearch < Searchlight::Search
 
   search_on Animal
-  
+
   searches :is_fictional
-  
+
   def initialize(*args)
     super
     self.is_fictional = :either if is_fictional.blank?
   end
-  
+
   def search_is_fictional
     case is_fictional.to_s
     when 'true'   then search.where(fictional: true)
@@ -210,7 +250,7 @@ AnimalSearch.new.results.to_sql
 
 ### Subclassing
 
-You can subclass an existing search class and support all the same options with a different search target. This may be useful for single table inheritance, for example. 
+You can subclass an existing search class and support all the same options with a different search target. This may be useful for single table inheritance, for example.
 
 ```ruby
 class VillageSearch < CitySearch
@@ -260,7 +300,7 @@ Searchlight plays nicely with Rails forms. All search options and any `attr_acce
     = f.select :continent, ['Africa', 'Asia', 'Europe'], include_blank: true
 
   = f.submit "Search"
-  
+
 - @results.each do |city|
   = render 'city'
 ```
@@ -277,9 +317,9 @@ class OrdersController < ApplicationController
     @search  = OrderSearch.new(search_params) # For use in a form
     @results = @search.results                # For display along with form
   end
-  
+
   protected
-  
+
   def search_params
     # Ensure the user can only browse or search their own orders
     (params[:search]) || {}).merge(user_id: current_user.id)
