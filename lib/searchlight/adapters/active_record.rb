@@ -20,7 +20,7 @@ module Searchlight
 
           eval_string = attribute_names.map { |attribute_name|
             model_class = model_class_for(search_target)
-            if model_class_for(search_target).columns_hash.keys.include?(attribute_name.to_s)
+            if model_has_db_attribute?(attribute_name.to_s)
 
               <<-UNICORN_BILE
               def search_#{attribute_name}
@@ -39,6 +39,25 @@ module Searchlight
           }.join
 
           @ar_searches_module.module_eval(eval_string, __FILE__, __LINE__)
+        end
+
+        # The idea here is to provide a means to allow users to bypass the check if it causes problems (e.g. during
+        # `rake assets:precompile` if the DB has yet to be created). To bypass this, a user could monkey patch as
+        # follows:
+        #
+        #     module Searchlight::Adapters::ActiveRecord::Search
+        #       def model_has_db_attribute?(attribute_name)
+        #         model_class_for(search_target).columns_hash.keys.include?(attribute_name)
+        #       rescue StandardError
+        #         true
+        #       end
+        #     end
+        #
+        # Alternatively, they could monkey-patch Searchlight::Adapters::ActiveRecord::Search::model_has_db_attribute
+        # to simply always return true, though they would then not get the benefit of the improved error messaging.
+        #
+        def model_has_db_attribute?(attribute_name)
+          model_class_for(search_target).columns_hash.keys.include?(attribute_name)
         end
       end
 
