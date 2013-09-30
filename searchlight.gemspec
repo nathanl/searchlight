@@ -4,6 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'searchlight/version'
 
 Gem::Specification.new do |spec|
+  spec.license       = 'MIT'
   spec.name          = "searchlight"
   spec.version       = Searchlight::VERSION
   spec.authors       = ["Nathan Long", "Adam Hunter"]
