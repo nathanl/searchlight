@@ -2,6 +2,10 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## v1.3.1
+
+Add license to gemspec, thanks to notice from Benjamin Fleischer - see [his blog post](http://www.benjaminfleischer.com/2013/07/12/make-the-world-a-better-place-put-a-license-in-your-gemspec/)
+
 ## v1.3.0
 
 New Mongoid adapter, thanks to [iliabylich](https://github.com/iliabylich).
