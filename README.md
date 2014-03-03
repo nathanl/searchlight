@@ -24,7 +24,7 @@ For example, if you have a Searchlight search class called `YetiSearch`, and you
   search = YetiSearch.new(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:search]
 ```
 
-... calling `results` on the instance will build a search by chaining calls to `search_active`, `search_name`, and `search_location`.
+... calling `results` on the instance will build a search by chaining calls to `search_active`, `search_name`, and `search_location_in`.
 
 The `results` method will then return the return value of the last search method. If you're using ActiveRecord, this would be an `ActiveRecord::Relation`, and you can then call `each` to loop through the results, `to_sql` to get the generated query, etc.
 
