@@ -286,27 +286,11 @@ class OrdersController < ApplicationController
   end
 end
 ```
-## Adapters
+## ActionView Adapter
 
-Currently, Searchlight has adapters for ActiveRecord, ActionView, and Mongoid. We'd love to get pull requests for others. :)
+Searchlight's ActionView adapter adds ActionView-friendly methods to your classes if it sees that `ActionView` is a defined constant. See the code for details, but the upshot is that you can use a search with `form_for`.
 
-### ActiveRecord and Mongoid
-
-When you call `search_on` in your Searchlight class, Searchlight checks whether the search target comes from ActiveRecord or Mongoid, and, if so, mixes a module into your class.
-
-For each of your search options, the module will have the simplest possible search method defined. For example, if your class `searches :name`, the ActiveRecord module will have this method:
-
-```ruby
-  def search_name
-    search.where(name: name)
-  end
-```
-
-Since that method is in a parent module, you can easily override it by defining your own method. You can also call `super` in the method you define.
-
-### ActionView
-
-Similarly, Searchlight adds ActionView-friendly methods to your classes if it sees that `ActionView` is a defined constant. See the code for details, but the upshot is that you can use a search with `form_for`.
+(Searchlight also has a couple of ORM "adapters", but these are not necessary and just add magic; they will likely be removed.)
 
 ## Compatibility
 
