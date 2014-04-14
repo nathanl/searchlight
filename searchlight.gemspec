@@ -30,4 +30,7 @@ Gem::Specification.new do |spec|
   # To test integration with actionview and activerecord
   spec.add_development_dependency "actionview",         "~> 4.1"
   spec.add_development_dependency "activemodel",        "~> 4.1"
+
+  # For coverage testing on Travis
+  spec.add_development_dependency "coveralls",        "~> 0.7"
 end
