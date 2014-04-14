@@ -28,5 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "simplecov", "~> 0.7"
 
   # To test integration with actionview and activerecord
-  spec.add_development_dependency "rails",        ">= 3.2"
+  spec.add_development_dependency "actionview",         "~> 4.1"
+  spec.add_development_dependency "activemodel",        "~> 4.1"
 end

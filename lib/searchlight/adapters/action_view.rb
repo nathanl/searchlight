@@ -5,7 +5,7 @@ module Searchlight
       module ClassMethods
 
         def model_name
-          ActiveModel::Name.new(self, nil, 'search')
+          ::ActiveModel::Name.new(self, nil, 'search')
         end
 
       end

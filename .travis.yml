@@ -1,10 +1,5 @@
 language: ruby
 rvm:
   - 1.9.3
-  - jruby-19mode # JRuby in 1.9 mode
-  - rbx-19mode # JRuby in 1.9 mode
   - 2.0.0
-gemfile:
-  - gemfiles/Gemfile.rails-3.2.x
-  - gemfiles/Gemfile.rails-4.0.x
-env: JRUBY_OPTS="-Xcext.enabled=true"
+  - 2.1.1
