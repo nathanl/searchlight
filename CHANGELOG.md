@@ -2,6 +2,34 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## Unreleased
+
+Now with fewer features!
+
+### No more ORM adapters
+
+ORM "adapters", which were never actually necessary, have been removed. They required lots of hackery, added test dependencies, and sometimes introduced [weird bugs](https://github.com/nathanl/searchlight/pull/15). All that just so that if you said your class `searches :first_name, :last_name`, we could save you from typing simple search methods like:
+
+```ruby
+def search_first_name
+  search.where(first_name: first_name)
+end
+```
+
+You can easily save yourself this effort with something like:
+
+```ruby
+%w[name address pant_size].each do |attr|
+  define_method("search_#{attr}") do
+    search.where(:"#{attr}" => attr)
+  end
+end
+```
+
+...and you'll get much saner backtraces if anything goes wrong.
+
+With this change, Searchlight no longer has any ties to any ORM, but can still work with any of them that use method chaining. Hooray!
+
 ## v1.3.1
 
 Add license to gemspec, thanks to notice from Benjamin Fleischer - see [his blog post](http://www.benjaminfleischer.com/2013/07/12/make-the-world-a-better-place-put-a-license-in-your-gemspec/)

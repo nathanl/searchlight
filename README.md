@@ -290,8 +290,6 @@ end
 
 Searchlight's ActionView adapter adds ActionView-friendly methods to your classes if it sees that `ActionView` is a defined constant. See the code for details, but the upshot is that you can use a search with `form_for`.
 
-(Searchlight also has a couple of ORM "adapters", but these are not necessary and just add magic; they will likely be removed.)
-
 ## Compatibility
 
 For any given version, check `.travis.yml` to see what Ruby versions we're testing for compatibility.
