@@ -2,9 +2,9 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
-## Unreleased
+## v2.0.0
 
-Now with fewer features!
+Now with fewer features! :D
 
 ### No more ORM adapters
 
