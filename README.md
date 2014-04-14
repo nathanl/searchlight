@@ -1,8 +1,8 @@
 # Searchlight
 
-Searchlight helps you build searches from options via Ruby methods that you write.
+Searchlight is a low-magic way to build database searches using an ORM.
 
-Searchlight can work with any ORM or object that can build a query using chained methods (eg, ActiveRecord's `.where(...).where(...).limit(...)`). It comes with modules for integrating with ActiveRecord and ActionView, but can easily be used in any Ruby program.
+Searchlight can work with **any** ORM or object that can build a query using **chained method calls** (eg, ActiveRecord's `.where(...).where(...).limit(...)`, or similar chains with [Sequel](https://rubygems.org/gems/sequel), [Mongoid](https://rubygems.org/gems/mongoid), etc).
 
 [![Gem Version](https://badge.fury.io/rb/searchlight.png)](https://rubygems.org/gems/searchlight)
 [![Code Climate](https://codeclimate.com/github/nathanl/searchlight.png)](https://codeclimate.com/github/nathanl/searchlight)
@@ -21,7 +21,9 @@ The basic idea of Searchlight is to build a search by chaining method calls that
 For example, if you have a Searchlight search class called `YetiSearch`, and you instantiate it like this:
 
 ```ruby
-  search = YetiSearch.new(active: true, name: 'Jimmy', location_in: %w[NY LA]) # or params[:search]
+  search = YetiSearch.new(
+    active: true, name: 'Jimmy', location_in: %w[NY LA] # or params[:search]
+  )
 ```
 
 ... calling `results` on the instance will build a search by chaining calls to `search_active`, `search_name`, and `search_location_in`.
