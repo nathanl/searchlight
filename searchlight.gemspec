@@ -29,5 +29,4 @@ Gem::Specification.new do |spec|
 
   # To test integration with actionview and activerecord
   spec.add_development_dependency "rails",        ">= 3.2"
-  spec.add_development_dependency "mongoid",      "~> 3.1"
 end
