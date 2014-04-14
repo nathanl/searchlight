@@ -7,4 +7,6 @@ end
 
 require 'searchlight/dsl'
 require 'searchlight/search'
-require 'searchlight/adapters/action_view'   if defined?(::ActionView)
+if defined?(::ActionView) && defined?(::ActiveModel)
+  require 'searchlight/adapters/action_view'
+end

@@ -6,10 +6,8 @@ describe 'Searchlight::Adapters::ActionView', type: :feature, adapter: true do
   let(:search) { AccountSearch.new(paid_amount: 15) }
 
   before :all do
+    # Only required when running these tests
     require 'searchlight/adapters/action_view'
-    require 'action_view'
-    require 'active_model'
-    require 'active_support/core_ext'
   end
 
   before :each do
@@ -21,7 +19,7 @@ describe 'Searchlight::Adapters::ActionView', type: :feature, adapter: true do
       f.text_field(:paid_amount)
     end
 
-    expect(form).to have_selector("form input[name='search[paid_amount]'][value='15']")
+    expect(form).to have_selector("form input[name='account_search[paid_amount]'][value='15']")
   end
 
   it "tells the form that it is not persisted" do

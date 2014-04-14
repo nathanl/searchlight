@@ -1,30 +1,23 @@
+require 'action_view'
+require 'active_model'
+require 'active_support/core_ext'
+
 module Searchlight
   module Adapters
     module ActionView
 
-      module ClassMethods
+      include ::ActiveModel::Conversion
 
-        def model_name
-          ::ActiveModel::Name.new(self, nil, 'search')
-        end
-
+      def self.included(target)
+        target.extend ::ActiveModel::Naming
       end
 
-      module InstanceMethods
-
-        def to_key
-          []
-        end
-
-        def persisted?
-          false
-        end
-
+      def persisted?
+        false
       end
 
     end
   end
 end
 
-Searchlight::Search.send(:include, Searchlight::Adapters::ActionView::InstanceMethods)
-Searchlight::Search.extend(Searchlight::Adapters::ActionView::ClassMethods)
+Searchlight::Search.send(:include, Searchlight::Adapters::ActionView)
