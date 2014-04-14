@@ -38,7 +38,9 @@ A search class has three main parts: a target, options, and methods. For example
 class PersonSearch < Searchlight::Search
 
   # The search target; in this case, an ActiveRecord model.
-  search_on Person
+  # This is the starting point for any chaining we do, and it's what
+  # will be returned if no search options are passed.
+  search_on Person.all
 
   # The options the search understands. Supply any combination of them to an instance.
   searches :first_name, :last_name
@@ -181,7 +183,7 @@ You can define defaults for boolean attributes if you treat them as "yes/no/eith
 ```ruby
 class AnimalSearch < Searchlight::Search
 
-  search_on Animal
+  search_on Animal.all
   
   searches :is_fictional
   
@@ -214,7 +216,7 @@ You can subclass an existing search class and support all the same options with 
 
 ```ruby
 class VillageSearch < CitySearch
-  search_on Village
+  search_on Village.all
 end
 ```
 

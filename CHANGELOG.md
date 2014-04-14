@@ -28,6 +28,8 @@ end
 
 ...and you'll get much saner backtraces if anything goes wrong.
 
+**ActiveRecord users**: note that with this change, you'll need to update your `search_on` calls to return an `ActiveRecord::Relation` so that, if no options are passed, you don't return the model class itself. Eg, instead of `search_on User`, do `search_on User.all` for Rails > 4 or `search_on User.scoped` for Rails < 4.
+
 With this change, Searchlight no longer has any ties to any ORM, but can still work with any of them that use method chaining. Hooray!
 
 ## v1.3.1
