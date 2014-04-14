@@ -2,6 +2,10 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## Unreleased
+
+Inputs generated using ActionView forms are now named after your search form. Eg, the form for 'UserSearch' will submit parameters under 'user_search', not just 'search'. This makes the code more standard and namespaces the form, in case, eg, you want to have two forms on the same page.
+
 ## v2.0.0
 
 Now with fewer features! :D
