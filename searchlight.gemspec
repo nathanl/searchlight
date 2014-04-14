@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.version       = Searchlight::VERSION
   spec.authors       = ["Nathan Long", "Adam Hunter"]
   spec.email         = ["nathanmlong@gmail.com", "adamhunter@me.com"]
-  spec.description   = %q{Searchlight helps you build searches from options via Ruby methods that you write. Searchlight can work with any ORM or object that allows chaining search methods. It comes with modules for integrating with ActiveRecord and ActionView, but can easily be used in any Ruby program.}
-  spec.summary       = %q{Searchlight helps you build searches from options via Ruby methods that you write.}
+  spec.summary        = %q{Searchlight is a low-magic way to build database searches using an ORM.}
+  spec.description    = %q{Searchlight is a low-magic way to build database searches using an ORM. It's compatible with ActiveRecord, Sequel, Mongoid, and any other ORM that can build queries by chaining method calls.}
   spec.homepage      = "https://github.com/nathanl/searchlight"
   spec.license       = "MIT"
 

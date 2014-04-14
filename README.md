@@ -124,7 +124,7 @@ search = MySearchClass.new(awesomeness: 'Xtreme')
 
 ... your search methods can use:
 
-- `awesomeness` to retrive the given value, `'Xtreme'`
+- `awesomeness` to retrieve the given value, `'Xtreme'`
 - `awesomeness?` to get a boolean version: `true`
 
 The boolean conversion is form-friendly, so that `0`, `'0'`, and `'false'` are considered `false`.
@@ -323,4 +323,4 @@ Or install it yourself as:
 ## Shout Outs
 
 - The excellent [Mr. Adam Hunter](https://github.com/adamhunter), co-creator of Searchlight.
-- [TMA](http://tma1.com) for supporting the development of Searchlight.
+- [TMA](http://tma1.com) for supporting the initial development of Searchlight.
