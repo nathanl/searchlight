@@ -2,9 +2,13 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
-## Unreleased
+## v3.0.0
 
-Inputs generated using ActionView forms are now named after your search form. Eg, the form for 'UserSearch' will submit parameters under 'user_search', not just 'search'. This makes the code more standard and namespaces the form, in case, eg, you want to have two forms on the same page.
+Two major releases in two days!? Well, I thought of another good, but breaking, change. To the major version bump, Robin!
+
+Inputs generated using `ActionView` forms are now named after your search form. Eg, the form for 'UserSearch' will submit parameters under 'user_search', not just 'search'. This makes the code more standard and namespaces the form, in case, eg, you want to have two forms on the same page.
+
+Note that to upgrade, Rails users will need to change references to `params[:search]` to something like `params[:user_search]` (depending on name of the search class).
 
 ## v2.0.0
 
