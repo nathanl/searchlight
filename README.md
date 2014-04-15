@@ -22,7 +22,7 @@ For example, if you have a Searchlight search class called `YetiSearch`, and you
 
 ```ruby
   search = YetiSearch.new(
-    active: true, name: 'Jimmy', location_in: %w[NY LA] # or params[:search]
+    active: true, name: 'Jimmy', location_in: %w[NY LA] # or params[:yeti_search]
   )
 ```
 
@@ -286,7 +286,7 @@ class OrdersController < ApplicationController
   
   def search_params
     # Ensure the user can only browse or search their own orders
-    (params[:search]) || {}).merge(user_id: current_user.id)
+    (params[:order_search]) || {}).merge(user_id: current_user.id)
   end
 end
 ```
