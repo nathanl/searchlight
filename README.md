@@ -286,7 +286,7 @@ class OrdersController < ApplicationController
   
   def search_params
     # Ensure the user can only browse or search their own orders
-    (params[:order_search]) || {}).merge(user_id: current_user.id)
+    (params[:order_search] || {}).merge(user_id: current_user.id)
   end
 end
 ```
