@@ -329,6 +329,17 @@ describe Searchlight::Search do
       expect(search.search).to eq(MockModel)
     end
 
+    context "when target is a proc" do
+      let(:proc_result) { 'some string' }
+      let(:proc_search_target) { -> { proc_result } }
+      let(:search_class) { AccountSearch }
+      let(:search) { search_class.new }
+
+      it "returns proc result" do
+        search_class.search_on proc_search_target
+        expect(search.search).to eq(proc_result)
+      end
+    end
   end
 
   describe "results" do

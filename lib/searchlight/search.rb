@@ -13,7 +13,14 @@ module Searchlight
     end
 
     def search
-      @search ||= self.class.search_target
+      @search ||= begin
+                    target = self.class.search_target
+                    if target.respond_to?(:call)
+                      target.call
+                    else
+                      target
+                    end
+                  end
     end
 
     def results
