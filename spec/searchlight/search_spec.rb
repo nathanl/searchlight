@@ -330,9 +330,11 @@ describe Searchlight::Search do
     end
 
     context "when target is a proc" do
+      class FooSearch < Searchlight::Search; end
+
       let(:proc_result) { 'some string' }
       let(:proc_search_target) { -> { proc_result } }
-      let(:search_class) { AccountSearch }
+      let(:search_class) { FooSearch }
       let(:search) { search_class.new }
 
       it "returns proc result" do
