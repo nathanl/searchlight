@@ -186,16 +186,16 @@ describe Searchlight::Search do
 
   describe "search_on" do
 
-    context "when an explicit search target was provided" do
+    context "when an explicit, non-callable search target was provided" do
 
-      let(:search_target) { "Bobby Fischer" }
+      let(:example_search_target) { "Bobby Fischer" }
 
       before :each do
-        search_class.search_on search_target
+        search_class.search_on example_search_target
       end
 
       it "makes the object accessible via `search_target`" do
-        expect(search_class.search_target).to eq(search_target)
+        expect(search_class.search_target).to eq(example_search_target)
       end
 
       it "makes the search target available to its children" do
@@ -206,6 +206,24 @@ describe Searchlight::Search do
         klass = Class.new(SpiffyAccountSearch) { search_on Array }
         expect(klass.search_target).to be(Array)
         expect(SpiffyAccountSearch.search_target).to be(MockModel)
+      end
+
+    end
+
+    context "when an explicit, callable search target was provided" do
+
+      it "calls it in the process of producing search results" do
+        search = ProcSearch.new(first_name: "Jimmy")
+        results = search.results
+        expect(results).to be_a(MockRelation)
+        expect(results.called_methods).to eq([:some_scope, :where])
+      end
+
+      it "allows it to refer to a parent class's callable search target" do
+        search = ChildProcSearch.new(first_name: "Carlos")
+        results = search.results
+        expect(results).to be_a(MockRelation)
+        expect(results.called_methods).to eq([:some_scope, :other_scope, :where])
       end
 
     end
@@ -329,19 +347,6 @@ describe Searchlight::Search do
       expect(search.search).to eq(MockModel)
     end
 
-    context "when target is a proc" do
-      class FooSearch < Searchlight::Search; end
-
-      let(:proc_result) { 'some string' }
-      let(:proc_search_target) { -> { proc_result } }
-      let(:search_class) { FooSearch }
-      let(:search) { search_class.new }
-
-      it "returns proc result" do
-        search_class.search_on proc_search_target
-        expect(search.search).to eq(proc_result)
-      end
-    end
   end
 
   describe "results" do
