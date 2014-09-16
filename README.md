@@ -233,6 +233,24 @@ SmallTownSearch.new(country_name_like: 'Norfolk').results.to_sql
   => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 1000) AND (`countries`.`name` LIKE '%Norfolk%')"
 ```
 
+### Delayed scope evaluation
+
+If your search target has a time-sensitive condition, you can wrap it in a callable object to prevent it from being evaluated when the class is defined. For example:
+
+```ruby
+class RecentOrdersSearch < Searchlight::Search
+  search_on proc { Orders.since(Time.now - 3.hours) }
+end
+```
+
+This does make subclassing a bit more complex:
+
+```ruby
+class ExpensiveRecentOrdersSearch < RecentOrderSearch
+  search_on proc { superclass.search_target.call.expensive }
+end
+```
+
 ### Dependent Options
 
 To allow search options that don't trigger searches directly, just use `attr_accessor`.

@@ -2,6 +2,10 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## v3.1.0
+
+Allow callable search targets, thanks to [Adam Nowak](https://github.com/lubieniebieski).
+
 ## v3.0.0
 
 Two major releases in two days!? Well, I thought of another good, but breaking, change. To the major version bump, Robin!
