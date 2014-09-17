@@ -7,7 +7,6 @@ Searchlight can work with **any** ORM or object that can build a query using **c
 [![Gem Version](https://badge.fury.io/rb/searchlight.png)](https://rubygems.org/gems/searchlight)
 [![Code Climate](https://codeclimate.com/github/nathanl/searchlight.png)](https://codeclimate.com/github/nathanl/searchlight)
 [![Build Status](https://api.travis-ci.org/nathanl/searchlight.png?branch=master)](https://travis-ci.org/nathanl/searchlight)
-[![Coverage Status](https://coveralls.io/repos/nathanl/searchlight/badge.png?branch=master)](https://coveralls.io/r/nathanl/searchlight?branch=master)
 [![Dependency Status](https://gemnasium.com/nathanl/searchlight.png)](https://gemnasium.com/nathanl/searchlight)
 
 ## Getting Started

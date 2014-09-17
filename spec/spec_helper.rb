@@ -1,11 +1,4 @@
 require 'capybara/rspec'
-if ENV["TRAVIS"]
-  require 'coveralls'
-  Coveralls.wear!
-else
-  require 'simplecov'
-  SimpleCov.start { add_filter "/spec" }
-end
 require 'searchlight'
 $LOAD_PATH << '.'
 require 'support/mock_model'
