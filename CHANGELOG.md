@@ -2,6 +2,12 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
+## Unreleased
+
+### Bugfix
+
+- Bugfix for Sequel users. Don't use `.call` unless target is a proc; avoids mistakenly using `Sequel::Dataset#call`. See [bug report](https://github.com/nathanl/searchlight/issues/25). Thanks to [Jorge Marques](https://github.com/jorge-marques) for pointing out this problem. Bug was introduced in v3.1.0.
+
 ## v3.1.0
 
 Allow callable search targets, thanks to [Adam Nowak](https://github.com/lubieniebieski).

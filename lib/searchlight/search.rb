@@ -15,7 +15,8 @@ module Searchlight
     def search
       @search ||= begin
                     target = self.class.search_target
-                    if target.respond_to?(:call)
+                    if callable?(target)
+                      # for delayed scope evaluation
                       target.call
                     else
                       target
@@ -82,6 +83,12 @@ module Searchlight
       return true if value.respond_to?(:empty?) && value.empty?
       return true if value.nil? || value.to_s.strip == ''
       false
+    end
+
+    def callable?(target)
+      # The obvious implementation would be 'respond_to?(:call)`, but
+      # then we may use Sequel::Dataset#call by accident.
+      target.is_a?(Proc)
     end
 
     MissingSearchTarget = Class.new(Searchlight::Error)
