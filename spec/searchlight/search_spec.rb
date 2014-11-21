@@ -186,7 +186,7 @@ describe Searchlight::Search do
 
   describe "search_on" do
 
-    context "when an explicit, non-callable search target was provided" do
+    context "when an explicit search target was provided and it's not a proc" do
 
       let(:example_search_target) { "Bobby Fischer" }
 
@@ -210,7 +210,7 @@ describe Searchlight::Search do
 
     end
 
-    context "when an explicit, callable search target was provided" do
+    context "when an explicit search target was provided and it is a proc" do
 
       it "calls it in the process of producing search results" do
         search = ProcSearch.new(first_name: "Jimmy")
