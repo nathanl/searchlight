@@ -2,7 +2,7 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org).
 
-## Unreleased
+## v3.1.1
 
 ### Bugfix
 
