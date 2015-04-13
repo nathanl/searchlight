@@ -41,7 +41,7 @@ class PersonSearch < Searchlight::Search
   # The search target; in this case, an ActiveRecord model.
   # This is the starting point for any chaining we do, and it's what
   # will be returned if no search options are passed.
-  search_on Person.all
+  search_on Person.scoped
 
   # The options the search understands. Supply any combination of them to an instance.
   searches :first_name, :last_name
@@ -184,7 +184,7 @@ You can define defaults for boolean attributes if you treat them as "yes/no/eith
 ```ruby
 class AnimalSearch < Searchlight::Search
 
-  search_on Animal.all
+  search_on Animal.scoped
   
   searches :is_fictional
   
@@ -217,7 +217,7 @@ You can subclass an existing search class and support all the same options with 
 
 ```ruby
 class VillageSearch < CitySearch
-  search_on Village.all
+  search_on Village.scoped
 end
 ```
 
