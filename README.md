@@ -41,7 +41,7 @@ class PersonSearch < Searchlight::Search
   # The search target; in this case, an ActiveRecord model.
   # This is the starting point for any chaining we do, and it's what
   # will be returned if no search options are passed.
-  search_on Person.all
+  search_on Person.all # or `.scoped` for ActiveRecord 3
 
   # The options the search understands. Supply any combination of them to an instance.
   searches :first_name, :last_name
