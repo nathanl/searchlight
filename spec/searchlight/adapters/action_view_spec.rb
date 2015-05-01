@@ -1,17 +1,17 @@
-require 'spec_helper'
+require "spec_helper"
 
-describe 'Searchlight::Adapters::ActionView', type: :feature, adapter: true do
+describe "Searchlight::Adapters::ActionView", type: :feature do
 
   let(:view)   { ::ActionView::Base.new }
   let(:search) { AccountSearch.new(paid_amount: 15) }
 
   before :all do
     # Only required when running these tests
-    require 'searchlight/adapters/action_view'
+    require "searchlight/adapters/action_view"
   end
 
   before :each do
-    view.stub(:protect_against_forgery?).and_return(false)
+    allow(view).to receive(:protect_against_forgery?).and_return(false)
   end
 
   it "it can be used to build a form" do

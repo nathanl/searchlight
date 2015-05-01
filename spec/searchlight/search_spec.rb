@@ -354,9 +354,8 @@ describe Searchlight::Search do
     let(:search) { AccountSearch.new(paid_amount: 50, business_name: "Rod's Meat Shack", other_attribute: 'whatevs') }
 
     it "builds a search by calling each search method that corresponds to a provided option" do
-      search.should_receive(:search_paid_amount).and_call_original
-      search.should_receive(:search_business_name).and_call_original
-      # Can't do `.should_not_receive(:search_other_attribute)` because the expectation defines a method which would get called.
+      expect(search).to receive(:search_paid_amount).and_call_original
+      expect(search).to receive(:search_business_name).and_call_original
       search.results
       expect(search.search.called_methods).to eq(2.times.map { :where })
     end
@@ -366,7 +365,7 @@ describe Searchlight::Search do
     end
 
     it "only runs the search once" do
-      search.should_receive(:run).once.and_call_original
+      expect(search).to receive(:run).once.and_call_original
       2.times { search.results }
     end
 
@@ -389,9 +388,9 @@ describe Searchlight::Search do
     let(:provided_options) { {bits: ' ', bats: nil, bots: false} }
 
     it "only runs search methods that have real values to search on" do
-      search.should_not_receive(:search_bits)
-      search.should_not_receive(:search_bats)
-      search.should_receive(:search_bots)
+      expect(search).not_to receive(:search_bits)
+      expect(search).not_to receive(:search_bats)
+      expect(search).to receive(:search_bots)
       search.send(:run)
     end
 
