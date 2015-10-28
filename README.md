@@ -11,7 +11,7 @@ Searchlight can work with **any** ORM or object that can build a query using **c
 
 ## Getting Started
 
-An [introductory video](https://vimeo.com/69179161), [the demo app it uses](http://bookfinder-searchlight-demo.herokuapp.com) and [the code for that app](https://github.com/nathanl/bookfinder) are available to help you get started.
+A [demo app](http://bookfinder-searchlight-demo.herokuapp.com) and [the code for that app](https://github.com/nathanl/searchlight_demo) are available to help you get started.
 
 ## Overview
 
