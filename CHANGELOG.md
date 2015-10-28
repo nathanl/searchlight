@@ -2,7 +2,11 @@
 
 Searchlight does its best to use [semantic versioning](http://semver.org), for the maintainers' best guess of ["what is a breaking change?"](https://xkcd.com/1172/).
 
-## Unreleased major version
+## Unreleased
+
+Nothing
+
+## v4.0.0 - 2015-10-28
 
 Removed the DSL methods to simplify some things. This is a breaking change, but I think the upgrade will be pretty easy. See below for details.
 
