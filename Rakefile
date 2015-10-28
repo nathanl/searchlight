@@ -13,3 +13,14 @@ task :console do
   ARGV.clear
   IRB.start
 end
+
+desc "Mutation test with mutant gem. Provide scope, eg: Searchlight::Search or Searchlight::Options#excluding_empties"
+task :mutant do
+  scope = ENV.fetch("SCOPE") {
+    puts "Must set SCOPE env variable, eg `SCOPE=Searchlight::Search`"
+    exit
+  }
+  ARGV.clear
+  command = "mutant --include lib --require searchlight --use rspec #{scope}"
+  exec(command)
+end
