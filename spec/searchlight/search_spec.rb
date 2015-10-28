@@ -2,366 +2,49 @@ require 'spec_helper'
 
 describe Searchlight::Search do
 
-  let(:search_class)     { Named::Class.new('ExampleSearch', described_class).tap {|klass|
-    klass.searches *allowed_options
-    allowed_options.each { |name| klass.send(:define_method, "search_#{name}") {} }
+  let(:raw_options) {
+    {
+      title_like: "Mere Christianity",
+      "author_name_like" => "Lew",
+      category_in: nil,
+      tags: ["", "fancy"],
+      book_thickness: "smallish",
+      parts_about_lolcats: "",
     }
   }
-  let(:allowed_options)  { Hash.new }
-  let(:provided_options) { Hash.new }
-  let(:search)           { search_class.new(provided_options) }
+  let(:search) { BookSearch.new(raw_options) }
 
-  describe "options" do
+  describe "parsing options" do
 
-    context "when given valid options" do
-
-      context "when the search class has no defaults" do
-
-        describe "screening options" do
-
-          let(:allowed_options) { [:name, :description, :categories, :nicknames] }
-
-          context "when all options are usable" do
-
-            let(:provided_options) { {name: 'Roy', description: 'Ornry', categories: %w[mammal moonshiner], nicknames: %w[Slim Bubba]} }
-
-            it "adds them to the options accessor" do
-              expect(search.options).to eq(provided_options)
-            end
-
-          end
-
-          context "when some provided options are empty" do
-
-            let(:provided_options) { {name: 'Roy', description: '', categories: ['', ''], nicknames: []} }
-
-            it "does not add them to the options accessor" do
-              expect(search.options).to eq(name: 'Roy')
-            end
-
-          end
-
-          context "when an empty options hash is given" do
-
-            let(:provided_options) { {} }
-
-            it "has empty options" do
-              expect(search.options).to eq({})
-            end
-
-          end
-
-          context "when the options are explicitly nil" do
-
-            let(:provided_options) { nil }
-
-            it "has empty options" do
-              expect(search.options).to eq({})
-            end
-
-          end
-
-          context "when some options are do not map to search methods (eg, attr_accessor)" do
-            let(:search_class) {
-              Named::Class.new('ExampleSearch', described_class) do
-                attr_accessor :krazy_mode
-                def search_name; end
-              end.tap { |klass| klass.searches *allowed_options }
-            }
-            let(:provided_options) { {name: 'Reese Roper', krazy_mode: true} }
-
-            it "sets all the provided values" do
-              expect(search.name).to       eq('Reese Roper')
-              expect(search.krazy_mode).to eq(true)
-            end
-
-            it "only lists options for the values corresponding to search methods" do
-              expect(search.options).to eq({name: 'Reese Roper'})
-            end
-
-          end
-
-        end
-
-      end
-
-      context "when the search class has defaults" do
-
-        let(:allowed_options) { [:name, :age] }
-        let(:search_class) {
-          Named::Class.new('ExampleSearch', described_class) do
-
-            def initialize(options)
-              super
-              self.name ||= 'Dennis'
-              self.age  ||= 37
-            end
-
-            def search_name; end
-            def search_age;  end
-
-          end.tap { |klass| klass.searches *allowed_options }
-        }
-
-        context "and there were no values given" do
-
-          let(:provided_options) { Hash.new }
-
-          it "uses the defaults for its accessors" do
-            expect(search.name).to eq('Dennis')
-            expect(search.age).to eq(37)
-          end
-
-          it "uses the defaults for its options hash" do
-            expect(search.options).to eq({name: 'Dennis', age: 37})
-          end
-
-        end
-
-        context "and values are given" do
-
-          let(:provided_options) { {name: 'Treebeard', age: 'A few thousand'} }
-
-          it "uses the provided values" do
-            expect(search.name).to eq('Treebeard')
-            expect(search.age).to eq('A few thousand')
-          end
-
-          it "uses the provided values for its options hash" do
-            expect(search.options).to eq({name: 'Treebeard', age: 'A few thousand'})
-          end
-
-        end
-
-      end
-
+    it "makes the raw options available" do
+      expect(search.raw_options).to equal(raw_options)
     end
 
-    context "when given invalid options" do
-
-      let(:provided_options) { {genus: 'Mellivora'} }
-
-      it "raises an error explaining that this search class doesn't search the given property" do
-        expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus/)
-      end
-
-      it "gives the error a readable string representation" do
-        error   = Searchlight::Search::UndefinedOption.new(:badger_height, Array)
-        expect(error.to_s).to eq(error.message)
-      end
-
-      context "if the provided option starts with 'search_'" do
-
-        let(:allowed_options)  { [:genus] }
-
-        context "and it looks like a valid search option" do
-
-          let(:provided_options) { {search_genus: 'Mellivora'} }
-
-          it "suggests the option name the user may have meant to provide" do
-            expect { search }.to raise_error( Searchlight::Search::UndefinedOption, /ExampleSearch.*genus.*Did you just mean/)
-          end
-
-        end
-
-        context "but doesn't look like a valid search option" do
-
-          let(:provided_options) { {search_girth: 'Wee'} }
-
-          it "doesn't suggest an option name" do
-            begin
-              search
-            rescue Searchlight::Search::UndefinedOption => exception
-              expect(exception.message.match(/Did you just mean/)).to be_nil
-            end
-          end
-
-        end
-
-      end
-
+    it "returns only useful values as `options`" do
+      expect(search.options).to eq(
+        title_like: "Mere Christianity",
+        "author_name_like" => "Lew",
+        book_thickness: "smallish",
+        in_print: "either",
+        tags: ["fancy"],
+      )
     end
 
+    it "knows which of the `options` have matching search_ methods" do
+      expect(search.options_with_search_methods).to eq(
+        title_like: "search_title_like",
+        "author_name_like" => "search_author_name_like",
+        in_print: "search_in_print",
+      )
+    end
   end
 
-  describe "search_on" do
+  describe "querying" do
 
-    context "when an explicit search target was provided and it's not a proc" do
-
-      let(:example_search_target) { "Bobby Fischer" }
-
-      before :each do
-        search_class.search_on example_search_target
-      end
-
-      it "makes the object accessible via `search_target`" do
-        expect(search_class.search_target).to eq(example_search_target)
-      end
-
-      it "makes the search target available to its children" do
-        expect(SpiffyAccountSearch.search_target).to be(MockModel)
-      end
-
-      it "allows the children to set their own search target" do
-        klass = Class.new(SpiffyAccountSearch) { search_on Array }
-        expect(klass.search_target).to be(Array)
-        expect(SpiffyAccountSearch.search_target).to be(MockModel)
-      end
-
-    end
-
-    context "when an explicit search target was provided and it is a proc" do
-
-      it "calls it in the process of producing search results" do
-        search = ProcSearch.new(first_name: "Jimmy")
-        results = search.results
-        expect(results).to be_a(MockRelation)
-        expect(results.called_methods).to eq([:some_scope, :where])
-      end
-
-      it "allows it to refer to a parent class's callable search target" do
-        search = ChildProcSearch.new(first_name: "Carlos")
-        results = search.results
-        expect(results).to be_a(MockRelation)
-        expect(results.called_methods).to eq([:some_scope, :other_scope, :where])
-      end
-
-    end
-
-    context "when no explicit search target was provided" do
-
-      let(:search_class) { Named::Class.new('Namespaced::ExampleSearch', described_class) }
-
-      it "guesses the search class based on its own namespaced class name" do
-        expect(search_class.search_target).to eq(Namespaced::Example)
-      end
-
-      context "when it can't make a guess as to the search class" do
-
-        let(:search_class) { Named::Class.new('Somekinda::Searchthingy', described_class) }
-
-        it "raises an exception" do
-          expect{search_class.search_target}.to raise_error(
-            Searchlight::Search::MissingSearchTarget, 
-            /No search target/
-          )
-        end
-
-      end
-
-      context "when it tries to guess the search class but fails" do
-        
-        let(:search_class) { Named::Class.new('NonExistentObjectSearch', described_class) }
-
-        it "raises an exception" do
-          expect{search_class.search_target}.to raise_error(
-            Searchlight::Search::MissingSearchTarget, 
-            /No search target.*uninitialized constant.*NonExistentObject/
-          )
-        end
-
-      end
-
-    end
-
-  end
-
-  describe "individual option accessors" do
-
-    describe "the accessors module" do
-
-      before :each do
-        search_class.searches :foo
-        search_class.searches :bar
-        search_class.searches :stuff
-      end
-
-      it "includes exactly one SearchlightAccessors module for this class" do
-        accessors_modules = search_class.ancestors.select {|a| a.name =~ /\ASearchlightAccessors/ }
-        expect(accessors_modules.length).to eq(1)
-        expect(accessors_modules.first).to be_a(Named::Module)
-      end
-    end
-
-    describe "value accessors" do
-
-      let(:allowed_options)  { [:beak_color] }
-      let(:provided_options) { {beak_color: 'mauve'} }
-
-      it "provides an getter for the value" do
-        search_class.searches :beak_color
-        expect(search.beak_color).to eq('mauve')
-      end
-
-      it "provides an setter for the value" do
-        search_class.searches :beak_color
-        search.beak_color = 'turquoise'
-        expect(search.beak_color).to eq('turquoise')
-      end
-
-    end
-
-    describe "boolean accessors" do
-
-      let(:provided_options) { {has_beak: has_beak} }
-
-      before :each do
-        search_class.searches :has_beak
-      end
-
-      {
-        'yeppers' => true,
-        1         => true,
-        '1'       => true,
-        15        => true,
-        'true'    => true,
-        0         => false,
-        '0'       => false,
-        ''        => false,
-        ' '       => false,
-        nil       => false,
-        'false'   => false
-      }.each do |input, output|
-
-        describe input.inspect do
-
-          let(:has_beak) { input }
-
-          it "becomes boolean #{output}" do
-            expect(search.has_beak?).to eq(output)
-          end
-
-        end
-
-      end
-
-    end
-
-  end
-
-  describe "search" do
-
-    let(:search) { AccountSearch.new }
-
-    it "is initialized with the search_target" do
-      expect(search.search).to eq(MockModel)
-    end
-
-  end
-
-  describe "results" do
-
-    let(:search) { AccountSearch.new(paid_amount: 50, business_name: "Rod's Meat Shack", other_attribute: 'whatevs') }
-
-    it "builds a search by calling each search method that corresponds to a provided option" do
-      expect(search).to receive(:search_paid_amount).and_call_original
-      expect(search).to receive(:search_business_name).and_call_original
-      search.results
-      expect(search.search.called_methods).to eq(2.times.map { :where })
-    end
-
-    it "returns the search" do
-      expect(search.results).to eq(search.search)
+    it "builds results by running all methods matching its options" do
+      expect(search).to receive(:search_title_like).and_call_original
+      expect(search).to receive(:search_author_name_like).and_call_original
+      expect(search.results.called_methods).to eq([:all, :order, :merge, :joins, :merge])
     end
 
     it "only runs the search once" do
@@ -371,29 +54,8 @@ describe Searchlight::Search do
 
   end
 
-  describe "run" do
-
-    let(:search_class) {
-      Named::Class.new('TinyBs', described_class) do
-        search_on Object
-        searches :bits, :bats, :bots
-
-        def search_bits; end
-        def search_bats; end
-        def search_bots; end
-
-      end
-    }
-
-    let(:provided_options) { {bits: ' ', bats: nil, bots: false} }
-
-    it "only runs search methods that have real values to search on" do
-      expect(search).not_to receive(:search_bits)
-      expect(search).not_to receive(:search_bats)
-      expect(search).to receive(:search_bots)
-      search.send(:run)
-    end
-
+  it "has an 'explain' method to show how it builds its query" do
+    expect(search.explain).to be_a(String)
   end
 
 end

@@ -1,6 +1,19 @@
 # Changelog
 
-Searchlight does its best to use [semantic versioning](http://semver.org).
+Searchlight does its best to use [semantic versioning](http://semver.org), for the maintainers' best guess of ["what is a breaking change?"](https://xkcd.com/1172/).
+
+## Unreleased major version
+
+Removed the DSL methods to simplify some things. This is a breaking change, but I think the upgrade will be pretty easy. See below for details.
+
+- Removed all DSL methods.
+  - `search_on` is now `def base_query`. Defining the base query in an instance method removes the need for procs and makes modification in subclasses as simple as `super`. Note that you *must* define `base_query` - Searchlight will no longer guess your search class based on the name of the search class. If you want such magic, [here it was](https://github.com/nathanl/searchlight/blob/v3.1.1/lib/searchlight/search.rb#L50).
+  - `searches` is removed. If your search has a public method like `search_title`, Searchlight will know to hand the `title` option to that method, and will define a `.title` reader for the option's value. This is slightly magical, but makes your code less repetitive.
+- Option-grabbing methods like `.title` and `.title?` are gone, in favor of `options[:title]` and `checked?(options[:title])`.
+  - `checked?` interprets `'0'` and `'false'` as false
+  - `empty?` interprets empty arrays and hashes as empty, as well as empty or whitespace-only strings. It's used to filter the options that get passed to your search methods.
+- `explain` tells you exactly how searchlight interpreted the options a search was given. (Depending on your ORM, you might also want to call `.sql` or `.to_sql` on `search.results` for further debugging.)
+- `Searchlight::Adapters::ActionView` adapter must now be explicitly required and included.
 
 ## v3.1.1
 

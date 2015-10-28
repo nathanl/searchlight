@@ -1,117 +1,69 @@
-module Searchlight
-  class Search
-    extend DSL
+require_relative "options"
 
-    def self.search_target
-      return @search_target           if defined?(@search_target)
-      return superclass.search_target if superclass.respond_to?(:search_target) && superclass != Searchlight::Search
-      guess_search_class!
-    end
+class Searchlight::Search
 
-    def initialize(options = {})
-      filter_and_mass_assign(options)
-    end
+  SEARCH_METHOD_PATTERN = /\Asearch_(?<option>.*)/
 
-    def search
-      @search ||= begin
-                    target = self.class.search_target
-                    if callable?(target)
-                      # for delayed scope evaluation
-                      target.call
-                    else
-                      target
-                    end
-                  end
-    end
+  attr_accessor :query
+  attr_reader   :raw_options
 
-    def results
-      @results ||= run
-    end
-
-    def options
-      search_attributes.reduce({}) { |hash, option_name|
-        option_val = send(option_name)
-        hash.tap { |hash| hash[option_name.to_sym] = option_val unless is_blank?(option_val) }
-      }
-    end
-
-    protected
-
-    attr_writer :search
-
-    private
-
-    def search_attributes
-      public_methods.map(&:to_s).select { |m| m.start_with?('search_') }.map { |m| m.sub(/\Asearch_/, '') }
-    end
-
-    def self.guess_search_class!
-      if self.name.end_with?('Search')
-        @search_target = name.sub(/Search\z/, '').split('::').inject(Kernel, &:const_get)
-      else
-        raise MissingSearchTarget, "No search target provided via `search_on` and Searchlight can't guess one."
-      end
-    rescue NameError => e
-      raise e unless /uninitialized constant/.match(e.message)
-      raise MissingSearchTarget, "No search target provided via `search_on` and Searchlight's guess was wrong. Error: #{e.message}"
-    end
-
-    def self.search_target=(value)
-      @search_target = value
-    end
-
-    def filter_and_mass_assign(provided_options = {})
-      options = (provided_options || {}).reject { |key, value| is_blank?(value) }
-      begin
-        options.each { |key, value| public_send("#{key}=", value) } if options && options.any?
-      rescue NoMethodError => e
-        raise UndefinedOption.new(e.name, self)
+  def self.method_added(method_name)
+    method_name.to_s.match(SEARCH_METHOD_PATTERN) do |match|
+      option_name = match.captures.fetch(0)
+      # accessor - eg, if method_name is #search_title, define #title
+      define_method(option_name) do
+        options[option_name]
       end
     end
-
-    def run
-      options.each do |option_name, value|
-        new_search  = public_send("search_#{option_name}")
-        self.search = new_search unless new_search.nil?
-      end
-      search
-    end
-
-    # Note that false is not blank
-    def is_blank?(value)
-      return true if value.respond_to?(:all?) && value.all? { |v| is_blank?(v) }
-      return true if value.respond_to?(:empty?) && value.empty?
-      return true if value.nil? || value.to_s.strip == ''
-      false
-    end
-
-    def callable?(target)
-      # The obvious implementation would be 'respond_to?(:call)`, but
-      # then we may use Sequel::Dataset#call by accident.
-      target.is_a?(Proc)
-    end
-
-    MissingSearchTarget = Class.new(Searchlight::Error)
-
-    class UndefinedOption < Searchlight::Error
-
-      attr_accessor :message
-
-      def initialize(option_name, search)
-        option_name = option_name.to_s.sub(/=\Z/, '')
-        self.message = "#{search.class.name} doesn't search '#{option_name}' or have an accessor for that property."
-        if option_name.start_with?('search_')
-          method_maybe_intended = option_name.sub(/\Asearch_/, '')
-          # Gee golly, I'm so helpful!
-          self.message << " Did you just mean '#{method_maybe_intended}'?" if search.respond_to?("#{method_maybe_intended}=")
-        end
-      end
-
-      def to_s
-        message
-      end
-
-    end
-
   end
+
+  def initialize(raw_options = {})
+    @raw_options = raw_options
+  end
+
+  def results
+    @results ||= run
+  end
+
+  def options
+    Searchlight::Options.excluding_empties(raw_options)
+  end
+
+  def empty?(value)
+    Searchlight::Options.empty?(value)
+  end
+
+  def checked?(value)
+    Searchlight::Options.checked?(value)
+  end
+
+  def explain
+    [
+      "Initialized with `raw_options`: #{raw_options.keys.inspect}",
+      "Of those, the non-blank ones are available as `options`: #{options.keys.inspect}",
+      "Of those, the following have corresponding `search_` methods: #{options_with_search_methods.keys}. These would be used to build the query.",
+      "Blank options are: #{(raw_options.keys - options.keys).inspect}",
+      "Non-blank options with no corresponding `search_` method are: #{options.keys - options_with_search_methods.keys}",
+    ].join("\n\n")
+  end
+
+  def options_with_search_methods
+    {}.tap do |map|
+      options.each do |option_name, option_value|
+        method_name = "search_#{option_name}" 
+        map[option_name] = method_name if respond_to?(method_name)
+      end
+    end
+  end
+
+  private
+
+  def run
+    self.query = base_query
+    options_with_search_methods.each do |option, method_name|
+      self.query = public_send(method_name)
+    end
+    query
+  end
+
 end

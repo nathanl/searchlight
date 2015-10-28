@@ -2,9 +2,7 @@ require 'capybara/rspec'
 require 'searchlight'
 $LOAD_PATH << '.'
 require 'support/mock_model'
-require 'support/account_search'
-require 'support/spiffy_account_search'
-require 'support/proc_search'
+require 'support/book_search'
 
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true

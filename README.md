@@ -15,17 +15,24 @@ An [introductory video](https://vimeo.com/69179161), [the demo app it uses](http
 
 ## Overview
 
-The basic idea of Searchlight is to build a search by chaining method calls that you define. It calls **public** methods on the object you specify, based on the options you pass.
+Searchlight's main use is to support search forms in web applications.
+
+Searchlight doesn't write queries for you. What it does do is:
+
+- Give you an object with which you can build a search form (eg, using `form_for` in Rails)
+- Give you a sensible place to put your query logic
+- Decide which parts of the search to run based on what the user submitted (eg, if they didn't fill in a "first name", don't do the `WHERE first_name =` part)
 
 For example, if you have a Searchlight search class called `YetiSearch`, and you instantiate it like this:
 
 ```ruby
   search = YetiSearch.new(
-    active: true, name: 'Jimmy', location_in: %w[NY LA] # or params[:yeti_search]
+    # or params[:yeti_search]
+    "active" => true, "name" => "Jimmy", "location_in" => %w[NY LA]
   )
 ```
 
-... calling `results` on the instance will build a search by chaining calls to `search_active`, `search_name`, and `search_location_in`.
+... calling `search.results` will build a search by calling the methods `search_active`, `search_name`, and `search_location_in` on your `YetiSearch`, assuming that you've defined them. (If you do it again but omit `"name"`, it won't call `search_name`.)
 
 The `results` method will then return the return value of the last search method. If you're using ActiveRecord, this would be an `ActiveRecord::Relation`, and you can then call `each` to loop through the results, `to_sql` to get the generated query, etc.
 
@@ -33,46 +40,46 @@ The `results` method will then return the return value of the last search method
 
 ### Search class
 
-A search class has three main parts: a target, options, and methods. For example:
+A search class has two main parts: a `base_query` and some `search_` methods. For example:
 
 ```ruby
 class PersonSearch < Searchlight::Search
 
-  # The search target; in this case, an ActiveRecord model.
   # This is the starting point for any chaining we do, and it's what
   # will be returned if no search options are passed.
-  search_on Person.all # or `.scoped` for ActiveRecord 3
-
-  # The options the search understands. Supply any combination of them to an instance.
-  searches :first_name, :last_name
+  # In this case, it's an ActiveRecord model.
+  def base_query
+    Person.all # or `.scoped` for ActiveRecord 3
+  end
 
   # A search method.
   def search_first_name
-    # If this is the first search method called, `search` here will be
-    # the search target, namely, `Person`.
-    # `first_name` is an automatically-defined accessor for the option value.
-    search.where(first_name: first_name)
+    # If `"first_name"` was the first key in the options_hash,
+    # `search` here will be the base query, namely, `Person.all`.
+    search.where(first_name: options[:first_name])
   end
 
   # Another search method.
   def search_last_name
-    # If this is the second search method called, `search` here will be
-    # whatever `search_first_name` returned.
+    # If `"last_name"` was the second key in the options_hash,
+    # `search` here will be whatever `search_first_name` returned.
     search.where(last_name: last_name)
   end
 end
 ```
 
-Here's a fuller example search class.
+Calling `PersonSearch.new("first_name" => "Gregor", "last_name" => "Mendel").results` would run `Person.all.where(first_name: "Gregor").where(last_name: "Mendel")` and return the resulting `ActiveRecord::Relation`. If you omitted the `last_name` option, or provided `"last_name" => ""`, the second `where` would not be added.
+
+Here's a fuller example search class. Note that **because Searchlight doesn't write queries for you, you're free to do anything your ORM supports**. (See `spec/support/book_search.rb` for even more fanciness.)
 
 ```ruby
 # app/searches/city_search.rb
 class CitySearch < Searchlight::Search
 
-  # `City` here is an ActiveRecord model (see notes below on the adapter)
-  search_on City.includes(:country)
-
-  searches :name, :continent, :country_name_like, :is_megacity
+  # `City` here is an ActiveRecord model
+  def base_query
+    City.includes(:country)
+  end
 
   # Reach into other tables
   def search_continent
@@ -84,10 +91,9 @@ class CitySearch < Searchlight::Search
     search.where("`countries`.`name` LIKE ?", "%#{country_name_like}%")
   end
 
-  # For every option, we also add an accessor that coerces to a boolean,
-  # considering 'false', 0, and '0' to be false
+  # .checked? considers "false", 0 and "0" to be false
   def search_is_megacity
-    search.where("`cities`.`population` #{is_megacity? ? '>=' : '<'} ?", 10_000_000)
+    search.where("`cities`.`population` #{checked?(is_megacity) ? '>=' : '<'} ?", 10_000_000)
   end
 
 end
@@ -98,12 +104,12 @@ Here are some example searches.
 ```ruby
 CitySearch.new.results.to_sql
   # => "SELECT `cities`.* FROM `cities` "
-CitySearch.new(name: 'Nairobi').results.to_sql
+CitySearch.new("name" => "Nairobi").results.to_sql
   # => "SELECT `cities`.* FROM `cities`  WHERE `cities`.`name` = 'Nairobi'"
 
-CitySearch.new(country_name_like: 'aust', continent: 'Europe').results.count # => 6
+CitySearch.new("country_name_like" =>  "aust", "continent" => "Europe").results.count # => 6
 
-non_megas = CitySearch.new(is_megacity: 'false')
+non_megas = CitySearch.new("is_megacity" => "false")
 non_megas.results.to_sql 
   # => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 100000"
 non_megas.results.each do |city|
@@ -113,152 +119,105 @@ end
 
 ### Accessors
 
-For each search option you allow, Searchlight defines two accessors: one for a value, and one for a boolean.
+For each search method you define, Searchlight will define a corresponding accessor method. Eg, if you add `def search_first_name`, your search class will get a `.first_name` method that returns `options["first_name"]`. This is useful mainly when building forms.
 
-For example, if your class `searches :awesomeness` and gets instantiated like:
+**Note that this checks for string keys** - you must either use them, or use something like `ActiveSupport::HashWithIndifferentAccess`.
 
-```ruby
-search = MySearchClass.new(awesomeness: 'Xtreme')
+### Examining Options
+
+Searchlight provides some methods for examining the options provided to your search.
+
+- `raw_options` contains exactly what it was instantiated with
+- `options` contains all `raw_options` that weren't `empty?`. Eg, if `raw_options` is `categories: nil, tags: ["a", ""]`, options will be `tags: ["a"]`.
+- `empty?(value)` returns true for `nil`, whitespace-only strings, or anything else that returns true from `value.empty?` (eg, empty arrays)
+- `checked?(value)` returns a boolean, which mostly works like `!!value` but considers `0`, `"0"`, and `"false"` to be `false`
+
+Finally, `explain` will tell you how Searchlight interpreted your options. Eg, `book_search.explain` might output:
+
 ```
+Initialized with `raw_options`: ["title_like", "author_name_like", "category_in",
+"tags", "book_thickness", "parts_about_lolcats"]
 
-... your search methods can use:
+Of those, the non-blank ones are available as `options`: ["title_like",
+"author_name_like", "tags", "book_thickness", "in_print"]
 
-- `awesomeness` to retrieve the given value, `'Xtreme'`
-- `awesomeness?` to get a boolean version: `true`
+Of those, the following have corresponding `search_` methods: ["title_like",
+"author_name_like", "in_print"]. These would be used to build the query.
 
-The boolean conversion is form-friendly, so that `0`, `'0'`, and `'false'` are considered `false`.
+Blank options are: ["category_in", "parts_about_lolcats"]
 
-All accessors are defined in modules, so you can override them and use `super` to call the original methods.
-
-```ruby
-class PersonSearch < Searchlight::Search
-
-  searches :names, :awesomeness
-
-  def names
-    # Make sure this is an array and never search for Jimmy.
-    # Jimmy is a private man. An old-fashioned man. Leave him be.
-    Array(super).reject { |name| name == 'Jimmy' }
-  end
-
-  def searches_names
-    search.where("name IN (?)", names)
-  end
-
-  def awesomeness?
-    # Disagree about what is awesome
-    !super
-  end
-
-end
+Non-blank options with no corresponding `search_` method are: ["tags",
+"book_thickness"]
 ```
-
-Additionally, each search instance has an `options` accessor, which will have all the usable options with which it was instantiated. This excludes empty collections, blank strings, `nil`, etc. These usable options will be used in determining which search methods to run.
 
 ### Defining Defaults
 
-Set defaults using plain Ruby. These can be used to prefill a form or to assume what the user didn't specify.
+Sometimes it's useful to have default search options - eg, "orders that haven't been fulfilled" or "houses listed in the last month".
+
+This can be done by overriding `options`. Eg:
 
 ```ruby
+class BookSearch < SearchlightSearch
 
-class CitySearch < Searchlight::Search
+  # def base_query...
 
-  #...
-
-  def initialize(options = {})
-    super    
-    self.continent ||= 'Asia'
+  def options
+    super.tap { |opts|
+      opts["in_print"] ||= "either"
+    }
   end
 
-  #...
+  def search_in_print
+    return query if options["in_print"].to_s == "either"
+    query.where(in_print: checked?(options["in_print"]))
+  end
+
 end
-
-CitySearch.new.results.to_sql
-  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Asia')"
-CitySearch.new(continent: 'Europe').results.to_sql
-  => "SELECT `cities`.* FROM `cities`  WHERE (`countries`.`continent` = 'Europe')"
-```
-
-You can define defaults for boolean attributes if you treat them as "yes/no/either" choices.
-
-```ruby
-class AnimalSearch < Searchlight::Search
-
-  search_on Animal.all
-  
-  searches :is_fictional
-  
-  def initialize(*args)
-    super
-    self.is_fictional = :either if is_fictional.blank?
-  end
-  
-  def search_is_fictional
-    case is_fictional.to_s
-    when 'true'   then search.where(fictional: true)
-    when 'false'  then search.where(fictional: false)
-    when 'either' then search # unmodified
-    end
-  end
-end
-
-
-AnimalSearch.new(fictional: true).results.to_sql
-  => "SELECT `animals`.* FROM `animals` WHERE (`fictional` = true)"
-AnimalSearch.new(fictional: false).results.to_sql
-  => "SELECT `animals`.* FROM `animals` WHERE (`fictional` = false)"
-AnimalSearch.new.results.to_sql
-  => "SELECT `animals`.* FROM `animals`"
 ```
 
 ### Subclassing
 
-You can subclass an existing search class and support all the same options with a different search target. This may be useful for single table inheritance, for example. 
+You can subclass an existing search class and support all the same options with a different base query. This may be useful for single table inheritance, for example. 
 
 ```ruby
 class VillageSearch < CitySearch
-  search_on Village.all
+  def base_query
+    Village.all
+  end
 end
 ```
 
-You can also use `search_target` to get the superclass's `search_on` value, so you can do this:
+Or you can use `super` to get the superclass's `base_query` value and modify it:
 
 ```ruby
 class SmallTownSearch < CitySearch
-  search_on search_target.where("`cities`.`population` < ?", 1_000)
-end
-
-SmallTownSearch.new(country_name_like: 'Norfolk').results.to_sql
-  => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 1000) AND (`countries`.`name` LIKE '%Norfolk%')"
-```
-
-### Delayed scope evaluation
-
-If your search target has a time-sensitive condition, you can wrap it in a callable object to prevent it from being evaluated when the class is defined. For example:
-
-```ruby
-class RecentOrdersSearch < Searchlight::Search
-  search_on proc { Orders.since(Time.now - 3.hours) }
+  def base_query
+    super.where("`cities`.`population` < ?", 1_000)
+  end
 end
 ```
 
-This does make subclassing a bit more complex:
+### Custom Options
 
-```ruby
-class ExpensiveRecentOrdersSearch < RecentOrderSearch
-  search_on proc { superclass.search_target.call.expensive }
-end
-```
-
-### Dependent Options
-
-To allow search options that don't trigger searches directly, just use `attr_accessor`.
+You can provide a Searchlight search any options you like; only those with a matching `search_` method will determine what methods are run. Eg, if you want to do `AccountSearch.new("super_user" => true)` to find restricted results, just ensure that you check `options["super_user"]` when building your query.
 
 ## Usage in Rails
 
-### Forms
+### ActionView adapter
 
-Searchlight plays nicely with Rails forms. All search options and any `attr_accessor`s you define can be hooked up to form fields.
+Searchlight plays nicely with Rails forms - just include the `ActionView` adapter as follows:
+
+```ruby
+require "searchlight/adapters/action_view"
+
+class MySearch < Searchlight::Search
+  include Searchlight::Adapters::ActionView
+
+  # ...etc
+end
+```
+
+This will enable using a `Searchlight::Search` with `form_for`:
 
 ```ruby
 # app/views/cities/index.html.haml
@@ -283,7 +242,7 @@ Searchlight plays nicely with Rails forms. All search options and any `attr_acce
   = f.submit "Search"
   
 - @results.each do |city|
-  = render 'city'
+  = render partial: 'city', locals: {city: city}
 ```
 
 ### Controllers
@@ -307,9 +266,6 @@ class OrdersController < ApplicationController
   end
 end
 ```
-## ActionView Adapter
-
-Searchlight's ActionView adapter adds ActionView-friendly methods to your classes if it sees that `ActionView` is a defined constant. See the code for details, but the upshot is that you can use a search with `form_for`.
 
 ## Compatibility
 

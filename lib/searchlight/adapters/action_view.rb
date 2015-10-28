@@ -8,8 +8,8 @@ module Searchlight
 
       include ::ActiveModel::Conversion
 
-      def self.included(target)
-        target.extend ::ActiveModel::Naming
+      def self.included(search_class)
+        search_class.extend ::ActiveModel::Naming
       end
 
       def persisted?
@@ -19,5 +19,3 @@ module Searchlight
     end
   end
 end
-
-Searchlight::Search.send(:include, Searchlight::Adapters::ActionView)
