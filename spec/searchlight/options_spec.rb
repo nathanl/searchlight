@@ -52,6 +52,11 @@ describe Searchlight::Options do
   describe "excluding empties" do
 
     it "removes empty values at the top level of the hash" do
+      # Simulate something like HashWithIndifferentAccess
+      relations = FancyHash.new
+      relations[:uncle] = "Jimmy"
+      relations[:aunt] = nil
+
       expect(
         mod.excluding_empties(
           name: "Bob",
@@ -59,8 +64,8 @@ describe Searchlight::Options do
           likes: ["pizza", "fish"],
           dislikes: [],
           elvish: false,
-          relations: {uncle: "Jimmy"},
-          eh: {},
+          relations: relations,
+          enemies: {},
         )
       ).to eq(
         name: "Bob",
@@ -76,12 +81,10 @@ describe Searchlight::Options do
       expect(
         mod.excluding_empties(
           tags: ["one", "two", "", nil, "three", ["a", "", nil, "b"], {a: ""}],
-          size_map: {small: "wee", medium: "not so wee", large: nil},
 
         )
       ).to eq(
         tags: ["one", "two", "three", ["a", "", nil, "b"], {a: ""}],
-        size_map: {small: "wee", medium: "not so wee"},
       )
     end
 

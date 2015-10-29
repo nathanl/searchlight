@@ -3,6 +3,7 @@ require 'searchlight'
 $LOAD_PATH << '.'
 require 'support/mock_model'
 require 'support/book_search'
+require 'support/fancy_hash'
 
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
