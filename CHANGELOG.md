@@ -4,9 +4,11 @@ Searchlight does its best to use [semantic versioning](http://semver.org), for t
 
 ## Unreleased
 
+Nothing
+
 ## v4.1.0 - 2015-10-29
 
-- Option readers now will find symbol keys as well as string keys
+Option readers now will find symbol keys as well as string keys.
 
 ## v4.0.0 - 2015-10-28
 
