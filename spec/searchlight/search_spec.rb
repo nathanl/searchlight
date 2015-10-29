@@ -75,7 +75,19 @@ describe Searchlight::Search do
   end
 
   it "has an 'explain' method to show how it builds its query" do
-    expect(search.explain).to be_a(String)
+    expect(search.explain).to eq(
+      %Q{
+Initialized with `raw_options`: [:title_like, "author_name_like", :category_in, :tags, :book_thickness, :parts_about_lolcats]
+
+Of those, the non-blank ones are available as `options`: [:title_like, "author_name_like", :tags, :book_thickness, :in_print]
+
+Of those, the following have corresponding `search_` methods: [:title_like, "author_name_like", :in_print]. These would be used to build the query.
+
+Blank options are: [:category_in, :parts_about_lolcats]
+
+Non-blank options with no corresponding `search_` method are: [:tags, :book_thickness]
+      }.strip
+    )
   end
 
 end
