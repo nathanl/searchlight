@@ -20,7 +20,13 @@ task :mutant do
     puts "Must set SCOPE env variable, eg `SCOPE=Searchlight::Search`"
     exit
   }
+
   ARGV.clear
   command = "mutant --include lib --require searchlight --use rspec #{scope}"
-  exec(command)
+  begin
+    exec(command)
+  rescue Errno::ENOENT
+    puts "Could not find mutant executable - please install gem 'mutant-rspec'"
+    puts "(Not included as a test dependency because it breaks CI; mutant only works with Ruby > 2.1.0"
+  end
 end

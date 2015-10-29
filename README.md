@@ -287,6 +287,8 @@ Or install it yourself as:
 
 ## Contributing
 
+`rake` runs the tests; `rake mutant` runs mutation tests using [mutant](https://github.com/mbj/mutant).
+
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
