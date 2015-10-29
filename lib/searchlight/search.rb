@@ -54,7 +54,7 @@ class Searchlight::Search
 
   def options_with_search_methods
     {}.tap do |map|
-      options.each do |option_name, option_value|
+      options.each do |option_name, _|
         method_name = "search_#{option_name}" 
         map[option_name] = method_name if respond_to?(method_name)
       end
