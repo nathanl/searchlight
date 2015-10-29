@@ -16,13 +16,9 @@ class MockRelation
   def method_missing(method, *args, &block)
     tap { called_methods << method }
   end
-
-  def is_a?(thing)
-    thing == ::ActiveRecord::Relation ? true : super
-  end
-
-  def engine
-    MockActiveRecord
+  
+  def ==(other)
+    other.class == self.class && other.called_methods == called_methods
   end
 
 end

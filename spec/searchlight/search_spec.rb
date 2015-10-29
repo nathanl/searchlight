@@ -14,6 +14,22 @@ describe Searchlight::Search do
   }
   let(:search) { BookSearch.new(raw_options) }
 
+  describe "initialization" do
+
+    it "doesn't require options" do
+      expect(BookSearch.new.results).to eq(BookSearch.new({}).results)
+    end
+
+    it "blows up if there is a string/symbol key conflict" do
+      expect {
+        described_class.new(a: 1, "a" => 2)
+      }.to raise_error(
+        ArgumentError, %Q{more than one key converts to these string values: ["a"]}
+      )
+    end
+
+  end
+
   describe "parsing options" do
 
     it "makes the raw options available" do
@@ -47,14 +63,6 @@ describe Searchlight::Search do
       expect(search.board_book).to eq(nil)
       expect{search.book_thickness}.to raise_error(NoMethodError)
       expect{search.not_an_option}.to raise_error(NoMethodError)
-    end
-
-    it "blows up if there is a string/symbol key conflict" do
-      expect {
-        described_class.new(a: 1, "a" => 2)
-      }.to raise_error(
-        ArgumentError, %Q{more than one key converts to these string values: ["a"]}
-      )
     end
 
   end
