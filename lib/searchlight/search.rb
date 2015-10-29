@@ -21,7 +21,7 @@ class Searchlight::Search
     string_keys, non_string_keys = raw_options.keys.partition {|k| k.is_a?(String) }
     intersection = string_keys & non_string_keys.map(&:to_s)
     if intersection.any?
-      fail ArgumentError, "more than one key converts to these string values: #{intersection.inspect}"
+      fail ArgumentError, "more than one key converts to these string values: #{intersection}"
     end
     @raw_options = raw_options
   end
