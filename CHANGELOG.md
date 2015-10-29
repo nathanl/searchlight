@@ -18,6 +18,7 @@ Removed the DSL methods to simplify some things. This is a breaking change, but 
   - `empty?` interprets empty arrays and hashes as empty, as well as empty or whitespace-only strings. It's used to filter the options that get passed to your search methods.
 - `explain` tells you exactly how searchlight interpreted the options a search was given. (Depending on your ORM, you might also want to call `.sql` or `.to_sql` on `search.results` for further debugging.)
 - `Searchlight::Adapters::ActionView` adapter must now be explicitly required and included.
+- Within your `search_` methods, the query you chain on is now called `query`, not `search`
 
 ## v3.1.1
 

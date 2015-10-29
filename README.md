@@ -55,15 +55,15 @@ class PersonSearch < Searchlight::Search
   # A search method.
   def search_first_name
     # If `"first_name"` was the first key in the options_hash,
-    # `search` here will be the base query, namely, `Person.all`.
-    search.where(first_name: options[:first_name])
+    # `query` here will be the base query, namely, `Person.all`.
+    query.where(first_name: options[:first_name])
   end
 
   # Another search method.
   def search_last_name
     # If `"last_name"` was the second key in the options_hash,
-    # `search` here will be whatever `search_first_name` returned.
-    search.where(last_name: last_name)
+    # `query` here will be whatever `search_first_name` returned.
+    query.where(last_name: last_name)
   end
 end
 ```
@@ -83,17 +83,17 @@ class CitySearch < Searchlight::Search
 
   # Reach into other tables
   def search_continent
-    search.where('`countries`.`continent` = ?', continent)
+    query.where('`countries`.`continent` = ?', continent)
   end
 
   # Other kinds of queries
   def search_country_name_like
-    search.where("`countries`.`name` LIKE ?", "%#{country_name_like}%")
+    query.where("`countries`.`name` LIKE ?", "%#{country_name_like}%")
   end
 
   # .checked? considers "false", 0 and "0" to be false
   def search_is_megacity
-    search.where("`cities`.`population` #{checked?(is_megacity) ? '>=' : '<'} ?", 10_000_000)
+    query.where("`cities`.`population` #{checked?(is_megacity) ? '>=' : '<'} ?", 10_000_000)
   end
 
 end
