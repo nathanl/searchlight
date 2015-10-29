@@ -24,17 +24,17 @@ Removed the DSL methods to simplify some things. This is a breaking change, but 
 - `Searchlight::Adapters::ActionView` adapter must now be explicitly required and included.
 - Within your `search_` methods, the query you chain on is now called `query`, not `search`
 
-## v3.1.1
+## v3.1.1 - 2014-11-21
 
 ### Bugfix
 
 - Bugfix for Sequel users. Don't use `.call` unless target is a proc; avoids mistakenly using `Sequel::Dataset#call`. See [bug report](https://github.com/nathanl/searchlight/issues/25). Thanks to [Jorge Marques](https://github.com/jorge-marques) for pointing out this problem. Bug was introduced in v3.1.0.
 
-## v3.1.0
+## v3.1.0 - 2014-09-16
 
 Allow callable search targets, thanks to [Adam Nowak](https://github.com/lubieniebieski).
 
-## v3.0.0
+## v3.0.0 - 2014-04-15
 
 Two major releases in two days!? Well, I thought of another good, but breaking, change. To the major version bump, Robin!
 
@@ -42,7 +42,7 @@ Inputs generated using `ActionView` forms are now named after your search form. 
 
 Note that to upgrade, Rails users will need to change references to `params[:search]` to something like `params[:user_search]` (depending on name of the search class).
 
-## v2.0.0
+## v2.0.0 - 2014-04-14
 
 Now with fewer features! :D
 
@@ -72,59 +72,59 @@ end
 
 With this change, Searchlight no longer has any ties to any ORM, but can still work with any of them that use method chaining. Hooray!
 
-## v1.3.1
+## v1.3.1 - 2013-09-30
 
 Add license to gemspec, thanks to notice from Benjamin Fleischer - see [his blog post](http://www.benjaminfleischer.com/2013/07/12/make-the-world-a-better-place-put-a-license-in-your-gemspec/)
 
-## v1.3.0
+## v1.3.0 - 2013-07-02
 
 New Mongoid adapter, thanks to [iliabylich](https://github.com/iliabylich).
 
-## v1.2.4
+## v1.2.4 - 2013-06-24
 
 - `options` method only returns those that map to search methods (not `attr_accessor` type values)
 - Previously, `searches :name` in a class with an `ActiveRecord` target would always trigger the `ActiveRecord` adapter to define `searches_name` as `search.where(name: name)`. Now it first checks whether `name` is a column on the model, and if not, defines the method to raise an error.
 
-## v1.2.3
+## v1.2.3 - 2013-06-18
 
 Fix bug introduced in v1.2: setting defaults in `initialize` did not add them to the options hash, which meant they weren't used in searches.
 
-## v1.2.2
+## v1.2.2 - 2013-06-11
 
 Gracefully handle being given explicit `nil` in initialization instead of options hash or empty arguments
 
-## v1.2.1
+## v1.2.1 - 2013-06-11
 
 Bugfix for v1.2.0 - screen out from options any collections containing only blank values
 
-## v1.2.0
+## v1.2.0 - 2013-06-11
 
 - Provide `options` accessor that returns all options considered non-blank
 - Slightly nicer errors when passing invalid options
 
-## v1.1.0
+## v1.1.0 - 2013-05-20
 
 ActiveRecord adapter ensures that searches return a relation, even if no options are given
 
-## v1.0.0
+## v1.0.0 - 2013-05-16
 
 - If no search target is given, search class attempts to guess based on its own name
 - All errors that can be raise extend `Searchlight::Error`
 - Better testing
 - Still more documentation!
 
-## v0.9.1
+## v0.9.1 - 2013-04-30
 
 Bugfix for ActiveRecord adapter
 
-## v0.9.0
+## v0.9.0 - 2013-04-18
 
 - Clean up dynamic module inclusion
 - Better `ActionView` and `ActiveRecord` adapters
 - Better error messages
 - More documentation
 
-## v0.0.1
+## v0.0.1 - 2013-04-08
 
 Experimental and unstable, Searchlight totters onto the scene and takes its first wide-eyed look at the world.
 
