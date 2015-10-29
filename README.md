@@ -117,9 +117,9 @@ non_megas.results.each do |city|
 end
 ```
 
-### Accessors
+### Option Readers
 
-For each search method you define, Searchlight will define a corresponding accessor method. Eg, if you add `def search_first_name`, your search class will get a `.first_name` method that returns `options["first_name"]`. This is useful mainly when building forms.
+For each search method you define, Searchlight will define a corresponding option reader method. Eg, if you add `def search_first_name`, your search class will get a `.first_name` method that returns `options["first_name"]`. This is useful mainly when building forms.
 
 **Note that this checks for string keys** - you must either use them, or use something like `ActiveSupport::HashWithIndifferentAccess`.
 
