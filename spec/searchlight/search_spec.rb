@@ -41,10 +41,20 @@ describe Searchlight::Search do
 
   describe "option readers" do
 
-    it "has an option reader method for each search method, which reads string options" do
+    it "has an option reader method for each search method, which can read strings or symbols" do
       expect(search.author_name_like).to eq("Lew")
-      expect(search.title_like).to eq(nil) # option key was a symbol - TODO convert them to strings
+      expect(search.title_like).to eq("Mere Christianity")
+      expect(search.board_book).to eq(nil)
+      expect{search.book_thickness}.to raise_error(NoMethodError)
       expect{search.not_an_option}.to raise_error(NoMethodError)
+    end
+
+    it "blows up if there is a string/symbol key conflict" do
+      expect {
+        described_class.new(a: 1, "a" => 2)
+      }.to raise_error(
+        ArgumentError, %Q{more than one key converts to these string values: ["a"]}
+      )
     end
 
   end

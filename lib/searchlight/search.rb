@@ -12,12 +12,17 @@ class Searchlight::Search
       option_name = match.captures.fetch(0)
       # accessor - eg, if method_name is #search_title, define #title
       define_method(option_name) do
-        options[option_name]
+        options.key?(option_name) ? options[option_name] : options[option_name.to_sym]
       end
     end
   end
 
   def initialize(raw_options = {})
+    string_keys, non_string_keys = raw_options.keys.partition {|k| k.is_a?(String) }
+    intersection = string_keys & non_string_keys.map(&:to_s)
+    if intersection.any?
+      fail ArgumentError, "more than one key converts to these string values: #{intersection.inspect}"
+    end
     @raw_options = raw_options
   end
 
