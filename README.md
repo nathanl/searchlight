@@ -119,9 +119,9 @@ end
 
 ### Option Readers
 
-For each search method you define, Searchlight will define a corresponding option reader method. Eg, if you add `def search_first_name`, your search class will get a `.first_name` method that returns `options["first_name"]`. This is useful mainly when building forms.
+For each search method you define, Searchlight will define a corresponding option reader method. Eg, if you add `def search_first_name`, your search class will get a `.first_name` method that returns `options["first_name"]` or, if that key doesn't exist, `options[:first_name]`. This is useful mainly when building forms.
 
-**Note that this checks for string keys** - you must either use them, or use something like `ActiveSupport::HashWithIndifferentAccess`.
+Since it considers the keys `"first_name"` and `:first_name` to be interchangeable, Searchlight will raise an error if you supply both.
 
 ### Examining Options
 
