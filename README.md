@@ -111,7 +111,7 @@ CitySearch.new("country_name_like" =>  "aust", "continent" => "Europe").results.
 
 non_megas = CitySearch.new("is_megacity" => "false")
 non_megas.results.to_sql 
-  # => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 100000"
+  # => "SELECT `cities`.* FROM `cities`  WHERE (`cities`.`population` < 10000000"
 non_megas.results.each do |city|
   # ...
 end
