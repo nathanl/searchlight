@@ -1,0 +1,9 @@
+<% module_namespacing do -%>
+class <%= class_name %>Search < Searchlight::Search
+  def base_query
+    <%= class_name %>.all
+  end
+
+  # Define your searches here
+end
+<% end -%>
