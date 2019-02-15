@@ -1,5 +1,15 @@
 # Searchlight
 
+## Status
+
+**I consider searchlight "done"**.
+It has no dependencies, so there's no reason it shouldn't work indefinitely.
+
+I've also moved on to other things.
+If Searchlight doesn't meet your needs anymore, fork away! :)
+
+## Description
+
 Searchlight is a low-magic way to build database searches using an ORM.
 
 Searchlight can work with **any** ORM or object that can build a query using **chained method calls** (eg, ActiveRecord's `.where(...).where(...).limit(...)`, or similar chains with [Sequel](https://rubygems.org/gems/sequel), [Mongoid](https://rubygems.org/gems/mongoid), etc).
