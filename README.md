@@ -3,7 +3,7 @@
 ## Status
 
 **I consider searchlight "done"**.
-It has no dependencies, so there's no reason it shouldn't work indefinitely.
+It has no production dependencies, so there's no reason it shouldn't work indefinitely.
 I've also moved on to other things.
 
 If you find a bug, feel free to open an issue so others can find it and discuss, but I'm unlikely to respond personally.
